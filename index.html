@@ -255,8 +255,75 @@
   .modal-box p{color:var(--text-secondary); font-size:13.5px; line-height:1.6; margin:0 0 8px;}
   .modal-actions{display:flex; gap:10px; justify-content:flex-end; margin-top:20px;}
 
+  /* ---- Bottom navigation bar (KCT3-style, mobile only) ---- */
+  .bottom-nav{
+    position:fixed; left:0; right:0; bottom:0; z-index:60;
+    max-width:920px; margin:0 auto;
+    display:none; align-items:stretch;
+    background:rgba(255,255,255,.97); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    border-top:1px solid var(--border); box-shadow:var(--shadow-lg);
+    padding:6px 6px calc(6px + env(safe-area-inset-bottom));
+  }
+  :root[data-theme="dark"] .bottom-nav{background:rgba(26,28,46,.97);}
+  @media (prefers-color-scheme: dark){
+    :root:where(:not([data-theme="light"])) .bottom-nav{background:rgba(26,28,46,.97);}
+  }
+  .nav-item{
+    flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+    padding:6px 2px; border-radius:var(--radius-sm); cursor:pointer; position:relative;
+    font-family:'Inter',sans-serif; font-size:10.5px; font-weight:600; color:var(--text-secondary);
+    background:none; border:none; -webkit-tap-highlight-color:transparent; transition:color .15s ease;
+    min-height:0;
+  }
+  .nav-item .nav-icon{
+    font-size:20px; line-height:1; width:34px; height:26px; display:flex; align-items:center; justify-content:center;
+    border-radius:10px; transition:background .15s ease, transform .15s ease;
+  }
+  .nav-item .nav-label{white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;}
+  .nav-item.active{color:var(--accent);}
+  .nav-item.active .nav-icon{background:var(--neutral-bg); transform:translateY(-1px);}
+  .nav-more{position:relative;}
+  .more-menu{
+    position:absolute; bottom:calc(100% + 12px); right:-6px; min-width:190px;
+    background:var(--surface-1); border:1px solid var(--border); border-radius:14px;
+    box-shadow:var(--shadow-lg); padding:6px; z-index:70;
+    display:none; flex-direction:column; gap:2px;
+  }
+  .more-menu.open{display:flex;}
+  .more-menu-item{
+    display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px;
+    font-family:'Inter',sans-serif; font-size:13.5px; font-weight:600; color:var(--text-primary);
+    cursor:pointer; text-align:left; white-space:nowrap;
+  }
+  .more-menu-item .nav-icon{font-size:16px; width:auto; height:auto; background:none;}
+  .more-menu-item:hover{background:var(--paper-dark);}
+  .more-menu-item.active{background:var(--neutral-bg); color:var(--accent);}
+
+  /* ---- PIN lock screen ---- */
+  .lock-screen{
+    position:fixed; inset:0; z-index:5000; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;
+    background:linear-gradient(135deg, #3730a3 0%, var(--accent) 55%, #7c3aed 100%);
+    padding:24px;
+  }
+  .lock-screen h2{color:#fff; font-size:22px; margin:0;}
+  .lock-screen p{color:rgba(255,255,255,.85); font-size:13.5px; margin:0; text-align:center;}
+  .lock-screen input{
+    font-family:'IBM Plex Mono',monospace; font-size:26px; letter-spacing:12px; text-align:center;
+    width:220px; padding:12px; border-radius:14px; border:none; outline:none;
+  }
+  .lock-screen button{
+    background:rgba(255,255,255,.2); border:1.5px solid rgba(255,255,255,.5); color:#fff;
+    border-radius:12px; padding:12px 34px; font-size:15px; font-weight:700; cursor:pointer;
+  }
+  .lock-screen .lock-err{color:#FECACA; font-weight:700; min-height:18px; font-size:13px;}
+
   @media(max-width:640px){
-    .wrap{padding:0 14px 40px;}
+    nav.tabs{display:none;}
+    .bottom-nav{display:flex;}
+  }
+
+  @media(max-width:640px){
+    .wrap{padding:0 14px calc(84px + env(safe-area-inset-bottom));}
     .hero-banner{padding:18px 16px 20px;border-radius:0 0 20px 20px;}
     .hero-banner h1{font-size:20px;}
     .card{padding:16px;border-radius:14px;}
@@ -688,6 +755,12 @@
       <p class="settings-note" id="obCurrentNote"></p>
     </div>
 
+    <div class="card" id="pinCard" style="display:none;">
+      <h2>🔒 App Lock (PIN)</h2>
+      <p class="settings-note">PIN set karne ke baad app kholne par PIN maanga jayega — har jagah (PC, mobile, sab). Ye ek simple family-lock hai taaki koi aur aapka hisab na khole; PIN yaad rakhna zaroori hai.</p>
+      <div class="backup-actions" id="pinActions"></div>
+    </div>
+
     <div class="card">
       <h2>Backup &amp; Restore</h2>
       <p class="settings-note">Data aapke apne Supabase cloud me save hota hai — file ek baar bhejne ke baad dobara bhejne ki zarurat nahi, sab PCs par hamesha latest data khud aa jata hai. Phir bhi time-time par Export karke JSON backup safe rakhna acha rehta hai (Export dabane par data ek box me khulega, wahan se copy karke Notepad me paste-save kar lena).</p>
@@ -718,6 +791,30 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<nav class="bottom-nav" id="bottomNav">
+  <button class="nav-item active" data-tab="dashboard" onclick="switchTab('dashboard')"><span class="nav-icon">📊</span><span class="nav-label">Dashboard</span></button>
+  <button class="nav-item" data-tab="sales" onclick="switchTab('sales')"><span class="nav-icon">🛒</span><span class="nav-label">Sale</span></button>
+  <button class="nav-item" data-tab="expenses" onclick="switchTab('expenses')"><span class="nav-icon">💸</span><span class="nav-label">Expense</span></button>
+  <button class="nav-item" data-tab="ledger" onclick="switchTab('ledger')"><span class="nav-icon">🤝</span><span class="nav-label">Udhaar</span></button>
+  <button class="nav-item nav-more" id="navMore" onclick="toggleMoreMenu(event)">
+    <span class="nav-icon">⋯</span><span class="nav-label">More</span>
+    <div class="more-menu" id="more-menu">
+      <div class="more-menu-item" data-tab="stock" onclick="event.stopPropagation(); closeMoreMenu(); switchTab('stock')"><span class="nav-icon">📦</span>Stock</div>
+      <div class="more-menu-item" data-tab="bank" onclick="event.stopPropagation(); closeMoreMenu(); switchTab('bank')"><span class="nav-icon">🏦</span>Bank Balance</div>
+      <div class="more-menu-item" data-tab="othersale" onclick="event.stopPropagation(); closeMoreMenu(); switchTab('othersale')"><span class="nav-icon">🎁</span>Other Sale</div>
+      <div class="more-menu-item" data-tab="settings" onclick="event.stopPropagation(); closeMoreMenu(); switchTab('settings')"><span class="nav-icon">⚙️</span>Settings</div>
+    </div>
+  </button>
+</nav>
+
+<div class="lock-screen" id="lockScreen" style="display:none;">
+  <h2>🔒 App Locked</h2>
+  <p>PIN daal kar kholo</p>
+  <input type="password" id="lockPinInput" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off">
+  <div class="lock-err" id="lockErr"></div>
+  <button onclick="tryUnlock()">Kholo</button>
+</div>
 <script id="state-data" type="application/json">{"panels":[],"sales":[],"expenses":[],"stock":[],"bankBalance":[],"ledger":[],"openingBalance":null,"cashBook":[],"otherSales":[],"deletedHistory":[]}</script>
 
 <script>
@@ -795,6 +892,7 @@ function normalizeState(){
   if(!state.cashBook) state.cashBook = [];
   if(!state.otherSales) state.otherSales = [];
   if(!state.deletedHistory) state.deletedHistory = [];
+  if(state.appPin === undefined) state.appPin = null;
   if(!state.panels) state.panels = [];
   if(state.openingBalance === undefined) state.openingBalance = null;
   // Purane version (payment field) se migration — data loss na ho
@@ -852,6 +950,7 @@ let lastCloudUpdatedAt = null;
 
 function saveState(){
   try{ localStorage.setItem('kushalTrackerCloudBackup', JSON.stringify(state)); }catch(e){}
+  try{ localStorage.setItem('stHasPin', state.appPin ? '1' : '0'); }catch(e){}
   __dirty = true;
   setBadge('⏳ Saving...', 'syncing');
   clearTimeout(__saveTimer);
@@ -876,6 +975,127 @@ async function pushToCloud(){
 function rerenderAll(){
   renderDashboard(); renderSalesTab(); renderExpensesTab(); renderStockTab();
   renderBankTab(); renderLedgerTab(); renderOtherSaleTab(); renderSettings();
+}
+
+/* ---------- BOTTOM NAV (mobile) ---------- */
+function toggleMoreMenu(e){
+  e.stopPropagation();
+  document.getElementById('more-menu')?.classList.toggle('open');
+}
+function closeMoreMenu(){
+  document.getElementById('more-menu')?.classList.remove('open');
+}
+document.addEventListener('click', (e)=>{
+  const menu = document.getElementById('more-menu');
+  if(menu && menu.classList.contains('open') && !e.target.closest('.nav-more')) menu.classList.remove('open');
+});
+
+/* ---------- APP LOCK (PIN) ---------- */
+// Simple family-lock: PIN ka SHA-256 hash cloud state me rehta hai, isliye
+// sab devices par same PIN lagta hai. Ye casual protection hai (technical
+// aadmi bypass kar sakta hai), lekin ghar/office me app kholne se rokta hai.
+const ENABLE_PIN = false;
+
+async function sha256hex(str){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function maybeLock(){
+  let hasPin = !!(state && state.appPin && state.appPin.hash);
+  if(!hasPin){
+    try{ hasPin = localStorage.getItem('stHasPin') === '1'; }catch(e){}
+  }
+  let unlocked = false;
+  try{ unlocked = sessionStorage.getItem('stUnlocked') === '1'; }catch(e){}
+  const scr = document.getElementById('lockScreen');
+  if(scr){
+    scr.style.display = (hasPin && !unlocked) ? 'flex' : 'none';
+    if(hasPin && !unlocked){ setTimeout(()=>document.getElementById('lockPinInput')?.focus(), 100); }
+  }
+}
+
+async function tryUnlock(){
+  const inp = document.getElementById('lockPinInput');
+  const err = document.getElementById('lockErr');
+  const pin = (inp.value || '').trim();
+  if(!pin){ err.textContent = 'PIN daalo'; return; }
+  // Agar cloud state abhi tak nahi aayi (offline), to hash compare nahi ho sakta
+  if(!(state && state.appPin && state.appPin.hash)){
+    err.textContent = 'Data load ho raha hai — 2 second baad dobara try karo';
+    return;
+  }
+  const h = await sha256hex(pin);
+  if(h === state.appPin.hash){
+    try{ sessionStorage.setItem('stUnlocked', '1'); }catch(e){}
+    inp.value = '';
+    err.textContent = '';
+    document.getElementById('lockScreen').style.display = 'none';
+  } else {
+    err.textContent = 'Galat PIN — dobara try karo';
+    inp.value = '';
+    inp.focus();
+  }
+}
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter' && document.getElementById('lockScreen')?.style.display === 'flex') tryUnlock();
+});
+
+function renderPinCard(){
+  const card = document.getElementById('pinCard');
+  const actions = document.getElementById('pinActions');
+  if(!card || !actions) return;
+  if(!ENABLE_PIN){ card.style.display = 'none'; return; }
+  card.style.display = '';
+  if(state.appPin && state.appPin.hash){
+    actions.innerHTML = '<button class="secondary" onclick="changePin()">PIN Badlo</button>' +
+      '<button class="danger" style="padding:10px 16px;font-size:13.5px;min-height:40px;" onclick="removePin()">PIN Hatao</button>';
+  } else {
+    actions.innerHTML = '<button class="secondary" onclick="setPin()">🔒 PIN Set Karo</button>';
+  }
+}
+
+function setPin(){
+  showPromptModal({
+    title: 'Naya PIN Set Karo',
+    body: '4-6 digit ka PIN daalo (yaad rakhna — bhoolne par main hi hata sakta hoon):',
+    defaultValue: '',
+    confirmLabel: 'Set Karo',
+    onConfirm: async (value) => {
+      const pin = (value || '').trim();
+      if(!/^[0-9]{4,6}$/.test(pin)){ toast('PIN sirf 4-6 digits ka hona chahiye.'); return; }
+      state.appPin = { hash: await sha256hex(pin) };
+      try{ sessionStorage.setItem('stUnlocked', '1'); }catch(e){}
+      saveState();
+      renderPinCard();
+      toast('PIN set ho gaya — ab app kholne par PIN lagega.');
+    }
+  });
+}
+
+function changePin(){
+  showPromptModal({
+    title: 'Purana PIN', body: 'Pehle abhi wala PIN daalo:', defaultValue: '', confirmLabel: 'Aage',
+    onConfirm: async (value) => {
+      const h = await sha256hex((value || '').trim());
+      if(h !== state.appPin.hash){ toast('Galat PIN.'); return; }
+      setPin();
+    }
+  });
+}
+
+function removePin(){
+  showPromptModal({
+    title: 'PIN Hatao', body: 'Abhi wala PIN daalo confirm karne ke liye:', defaultValue: '', confirmLabel: 'Hatao',
+    onConfirm: async (value) => {
+      const h = await sha256hex((value || '').trim());
+      if(h !== state.appPin.hash){ toast('Galat PIN.'); return; }
+      state.appPin = null;
+      saveState();
+      renderPinCard();
+      toast('PIN hat gaya — ab app bina PIN ke khulegi.');
+    }
+  });
 }
 
 /* ---------- DELETE HISTORY (recycle bin) ---------- */
@@ -1071,6 +1291,13 @@ function toggleTheme(){
 function switchTab(tab){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
   document.querySelectorAll('.tabpanel').forEach(p=>p.classList.toggle('active', p.id === 'tab-'+tab));
+  // bottom-nav (mobile) highlight — "More" tab active jab secondary tab khula ho
+  const secondaryTabs = ['stock','bank','othersale','settings'];
+  document.querySelectorAll('.bottom-nav .nav-item[data-tab]').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+  document.querySelectorAll('.more-menu-item[data-tab]').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+  const more = document.getElementById('navMore');
+  if(more) more.classList.toggle('active', secondaryTabs.includes(tab));
+  window.scrollTo({top:0});
   if(tab==='dashboard') renderDashboard();
   if(tab==='sales') renderSalesTab();
   if(tab==='expenses') renderExpensesTab();
@@ -2298,6 +2525,7 @@ function renderSettings(){
   }
   renderOpeningBalance();
   renderDeleteHistory();
+  renderPinCard();
 }
 
 function renderOpeningBalance(){
@@ -2467,6 +2695,7 @@ function clearAllData(){
 // Pehle embedded/local data se turant render (blank screen na dikhe),
 // phir cloud se latest data fetch karke us par switch.
 renderDashboard();
+maybeLock();
 (async function initCloud(){
   setBadge('⏳ Loading...', 'syncing');
   try{
@@ -2476,7 +2705,9 @@ renderDashboard();
       normalizeState();
       lastCloudUpdatedAt = row.updated_at;
       try{ localStorage.setItem('kushalTrackerCloudBackup', JSON.stringify(state)); }catch(e){}
+      try{ localStorage.setItem('stHasPin', state.appPin ? '1' : '0'); }catch(e){}
       rerenderAll();
+      maybeLock();
       setBadge('☁️ Live', 'synced');
     } else {
       // Cloud abhi khali hai — is file ka embedded data pehli baar upload karo.
