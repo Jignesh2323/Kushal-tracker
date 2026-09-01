@@ -529,6 +529,10 @@
           <label for="expFilterMonth">Month</label>
           <select id="expFilterMonth" onchange="renderExpensesTable()"></select>
         </div>
+        <div class="field">
+          <label for="expFilterCategory">Category</label>
+          <select id="expFilterCategory" onchange="renderExpensesTable()"></select>
+        </div>
       </div>
       <div class="kpi-row" id="expSummaryKpiRow"></div>
       <p class="settings-note" style="margin:-10px 0 16px;">Ye Total Cash+Bank dono expenses jodta hai. Monthly Profit calculation me sirf <b>Cash-source</b> expenses hi Cash Balance ghatate hain — Bank expenses Profit formula ko directly affect nahi karte (Bank Balance alag se, Bank Balance tab me track hoti hai).</p>
@@ -1905,6 +1909,7 @@ function renderExpensesTab(){
   fillPanelSelect(document.getElementById('expPanel'), true);
   if(!document.getElementById('expDate').value) document.getElementById('expDate').value = new Date().toISOString().slice(0,10);
   fillMonthSelect(document.getElementById('expFilterMonth'), true);
+  fillExpCategoryFilter();
   updateExpCategoryOptions();
   document.getElementById('cashBookKpiRow').innerHTML = `
     <div class="kpi stat-bank"><div class="label">Current Cash Balance</div><div class="value">${fmt(liveCashBalance())}</div></div>
@@ -1912,22 +1917,37 @@ function renderExpensesTab(){
   renderExpensesTable();
 }
 
-function renderExpenseSummaryKpis(monthF){
-  const rows = state.expenses.filter(r => r.direction!=='in' && (monthF==='all' || r.date.slice(0,7)===monthF));
+function fillExpCategoryFilter(){
+  const sel = document.getElementById('expFilterCategory');
+  const current = sel.value;
+  const cats = Array.from(new Set(state.expenses.map(r=>r.category).filter(Boolean))).sort();
+  sel.innerHTML = '<option value="all">All Categories</option>' +
+    cats.map(c=>`<option value="${c}">${c}</option>`).join('');
+  if(cats.includes(current)) sel.value = current;
+}
+
+function renderExpenseSummaryKpis(monthF, catF){
+  const rows = state.expenses.filter(r => r.direction!=='in'
+    && (monthF==='all' || r.date.slice(0,7)===monthF)
+    && (catF==='all' || r.category===catF));
   const totalExp = rows.reduce((a,r)=>a+Number(r.amount||0),0);
   const cashExp = rows.filter(r=>r.source==='Cash').reduce((a,r)=>a+Number(r.amount||0),0);
   const bankExp = rows.filter(r=>r.source==='Bank').reduce((a,r)=>a+Number(r.amount||0),0);
+  const catLabel = catF==='all' ? 'Total Expenses (Cash + Bank)' : `Total: ${catF}`;
   document.getElementById('expSummaryKpiRow').innerHTML = `
-    <div class="kpi stat-warning"><div class="label">Total Expenses (Cash + Bank)</div><div class="value">${fmt(totalExp)}</div></div>
+    <div class="kpi stat-warning"><div class="label">${catLabel}</div><div class="value">${fmt(totalExp)}</div></div>
     <div class="kpi stat-bank"><div class="label">Cash Expenses</div><div class="value">${fmt(cashExp)}</div></div>
     <div class="kpi stat-info"><div class="label">Bank Expenses</div><div class="value">${fmt(bankExp)}</div></div>
+    <div class="kpi stat-neutral"><div class="label">Entries</div><div class="value">${rows.length}</div></div>
   `;
 }
 
 function renderExpensesTable(){
   const monthF = document.getElementById('expFilterMonth').value || 'all';
-  renderExpenseSummaryKpis(monthF);
-  let rows = state.expenses.filter(r => monthF==='all' || r.date.slice(0,7)===monthF)
+  const catF = document.getElementById('expFilterCategory').value || 'all';
+  renderExpenseSummaryKpis(monthF, catF);
+  let rows = state.expenses.filter(r => (monthF==='all' || r.date.slice(0,7)===monthF)
+      && (catF==='all' || r.category===catF))
     .sort((a,b)=> b.date.localeCompare(a.date));
 
   if(rows.length===0){
