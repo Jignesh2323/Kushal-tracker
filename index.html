@@ -1580,11 +1580,22 @@ function renderDashboard(){
 
   const ledgerTotals = cumulativeLedgerAsOf('all');
   document.getElementById('ledgerTotalLabel').textContent = ledgerTotals.asOfMonth ? ('Total (as of ' + monthLabel(ledgerTotals.asOfMonth) + ')') : 'Total';
+  // Selected month ki apni upad alag dikhao — yehi amount us month ke
+  // Monthly Profit me count hota hai (total nahi).
+  const isMonthScope = month !== 'all' && !isYearScope(month);
+  const monthUpad = isMonthScope
+    ? state.expenses.filter(r => r.direction!=='in' && r.category==='Upad / Personal' && r.date.slice(0,7)===month)
+        .reduce((a,r)=>a+Number(r.amount||0),0)
+    : null;
+  const monthUpadKpi = isMonthScope
+    ? `<div class="kpi stat-warning"><div class="label">Upad sirf ${monthLabel(month)} ki <span style="font-weight:400">(yehi profit me count hoti hai)</span></div><div class="value">${fmt(monthUpad)}</div></div>`
+    : '';
   document.getElementById('ledgerTotalKpiRow').innerHTML = `
     <div class="kpi stat-bank"><div class="label">Total Investment Received</div><div class="value">${fmt(ledgerTotals.investment)}</div></div>
     <div class="kpi stat-good"><div class="label">Total Levana (lena hai)</div><div class="value">${fmt(ledgerTotals.levana)}</div></div>
     <div class="kpi stat-bad"><div class="label">Total Devana (dena hai)</div><div class="value">${fmt(ledgerTotals.devana)}</div></div>
     <div class="kpi stat-warning"><div class="label">Total Upad (personal draw)</div><div class="value">${fmt(ledgerTotals.upad)}</div></div>
+    ${monthUpadKpi}
   `;
 }
 
