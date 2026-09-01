@@ -1223,9 +1223,9 @@ function panelName(id){
   return p ? p.name : '—';
 }
 function defaultDashMonth(){
-  if(state.sales.some(r=>r.month===currentMonth())) return currentMonth();
-  const withData = Array.from(new Set(state.sales.map(r=>r.month))).sort().reverse();
-  return withData.length ? withData[0] : currentMonth();
+  // Reload/open par hamesha chalu (calendar) month dikhao — chahe usme abhi
+  // sales entry na ho. (Pehle latest data wala month dikhta tha, jo confusing tha.)
+  return currentMonth();
 }
 
 /* ---------- THEME ---------- */
