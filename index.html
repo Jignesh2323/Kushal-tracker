@@ -355,7 +355,6 @@
     <button class="tab-btn" data-tab="stock" onclick="switchTab('stock')">📦 Stock</button>
     <button class="tab-btn" data-tab="bank" onclick="switchTab('bank')">🏦 Bank Balance</button>
     <button class="tab-btn" data-tab="ledger" onclick="switchTab('ledger')">🤝 Udhaar Khata</button>
-    <button class="tab-btn" data-tab="othersale" onclick="switchTab('othersale')">🎁 Other Sale</button>
     <button class="tab-btn" data-tab="settings" onclick="switchTab('settings')">⚙️ Settings</button>
   </nav>
 
@@ -651,7 +650,7 @@
         <button type="submit" class="primary">Save</button>
         <button type="button" class="secondary" id="ledgerCancelBtn" style="display:none" onclick="cancelLedgerEdit()">Cancel</button>
       </form>
-      <p class="settings-note">Investment = jo paisa aapne kisi se liya business me lagane ke liye. Levana = jo paisa aapko doosron se lena hai. Devana = jo paisa aapko doosron ko dena hai. "Badhao" se balance badhta hai (naya udhaar/purchase), "Ghatao" se ghatta hai (payment kiya) — total hamesha current/live balance dikhata hai. Upad ab Expenses &amp; Cash tab me hai.<br><b>Teeno Cash Balance se automatically linked hain:</b> Levana Badhao (udhaar diya) = Cash kam, Ghatao (wapas mila) = Cash zyada. Devana Badhao (naya udhaar liya, abhi payment nahi) = Cash par asar nahi, Ghatao (payment kiya) = Cash kam. Investment Badhao (paisa mila) = Cash zyada, Ghatao (wapas kiya) = Cash kam. Entry delete karne se uska ulta apne aap ho jaata hai.<br><b>Person-wise Balance table neeche Other Sale tab ki pending entries bhi combined dikhata hai</b> (usi person ke Devana/Levana ke saath jud jaati hai) — entries khud "🎁 Other Sale" tab me dalni hain.</p>
+      <p class="settings-note">Investment = jo paisa aapne kisi se liya business me lagane ke liye. Levana = jo paisa aapko doosron se lena hai. Devana = jo paisa aapko doosron ko dena hai. "Badhao" se balance badhta hai (naya udhaar/purchase), "Ghatao" se ghatta hai (payment kiya) — total hamesha current/live balance dikhata hai. Upad ab Expenses &amp; Cash tab me hai.<br><b>Teeno Cash Balance se automatically linked hain:</b> Levana Badhao (udhaar diya) = Cash kam, Ghatao (wapas mila) = Cash zyada. Devana Badhao (naya udhaar liya, abhi payment nahi) = Cash par asar nahi, Ghatao (payment kiya) = Cash kam. Investment Badhao (paisa mila) = Cash zyada, Ghatao (wapas kiya) = Cash kam. Entry delete karne se uska ulta apne aap ho jaata hai.</p>
     </div>
 
     <div class="card">
@@ -676,53 +675,6 @@
       </div>
       <div class="table-scroll">
         <table id="ledgerTable"></table>
-      </div>
-    </div>
-  </section>
-
-  <!-- OTHER SALE (direct product sale to a person, outside Amazon/Flipkart/Meesho) -->
-  <section id="tab-othersale" class="tabpanel">
-    <div class="card">
-      <h2 id="otherSaleFormTitle">Add Entry</h2>
-      <form class="entry-form" id="otherSaleForm" onsubmit="return submitOtherSale(event)">
-        <input type="hidden" id="otherSaleEditId">
-        <div class="field">
-          <label for="otherSaleDirection">Entry</label>
-          <select id="otherSaleDirection">
-            <option value="add">📦 Sale Hui (payment baaki hai)</option>
-            <option value="subtract">💰 Payment Mila</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="otherSaleDate">Date</label>
-          <input type="date" id="otherSaleDate" required="">
-        </div>
-        <div class="field">
-          <label for="otherSalePerson">Person</label>
-          <select id="otherSalePerson" onchange="onOtherSalePersonChange()" required=""></select>
-        </div>
-        <div class="field" style="flex:1;min-width:160px;">
-          <label for="otherSaleProduct">Product / Detail</label>
-          <input type="text" id="otherSaleProduct" required="">
-        </div>
-        <div class="field">
-          <label for="otherSaleAmount">Amount (₹)</label>
-          <input type="number" id="otherSaleAmount" min="0" step="0.01" required="">
-        </div>
-        <div class="field" style="flex:1;min-width:160px;">
-          <label for="otherSaleNote">Note <span style="color:var(--muted)">(optional)</span></label>
-          <input type="text" id="otherSaleNote">
-        </div>
-        <button type="submit" class="primary">Save</button>
-        <button type="button" class="secondary" id="otherSaleCancelBtn" style="display:none" onclick="cancelOtherSaleEdit()">Cancel</button>
-      </form>
-      <p class="settings-note">Ye Amazon/Flipkart/Meesho ke Total Sale me count NAHI hoti — sirf alag se track hoti hai ki kisi doosre person ko product becha aur uska payment kitna baaki hai. "Sale Hui" se pending amount badhta hai, "Payment Mila" se ghatta hai. Cash/Bank Balance ya Monthly Profit is se directly affect nahi hote. <b>Pending balance ab Udhaar Khata tab ke Person-wise Balance table me Devana/Levana ke saath combined dikhta hai.</b></p>
-    </div>
-
-    <div class="card">
-      <h2>All Entries</h2>
-      <div class="table-scroll">
-        <table id="otherSaleTable"></table>
       </div>
     </div>
   </section>
@@ -779,7 +731,7 @@
 
     <div class="card">
       <h2>🗑️ Delete History <span class="sub">galti se delete hui entries yaha milengi</span></h2>
-      <p class="settings-note">Jab bhi koi entry delete hoti hai (Sale, Expense, Stock, Bank, Udhaar, Other Sale, Panel), uski copy yaha save ho jaati hai. <b>Restore</b> dabate hi entry wapas apni jagah jud jayegi. Ye history bhi cloud me sync hoti hai, isliye sab PCs par dikhegi (last 200 deletes tak).</p>
+      <p class="settings-note">Jab bhi koi entry delete hoti hai (Sale, Expense, Stock, Bank, Udhaar, Panel), uski copy yaha save ho jaati hai. <b>Restore</b> dabate hi entry wapas apni jagah jud jayegi. Ye history bhi cloud me sync hoti hai, isliye sab PCs par dikhegi (last 200 deletes tak).</p>
       <div class="table-scroll">
         <table id="deleteHistoryTable"></table>
       </div>
@@ -806,7 +758,6 @@
     <div class="more-menu" id="more-menu">
       <div class="more-menu-item" data-tab="stock" onclick="event.stopPropagation(); closeMoreMenu(); switchTab('stock')"><span class="nav-icon">📦</span>Stock</div>
       <div class="more-menu-item" data-tab="bank" onclick="event.stopPropagation(); closeMoreMenu(); switchTab('bank')"><span class="nav-icon">🏦</span>Bank Balance</div>
-      <div class="more-menu-item" data-tab="othersale" onclick="event.stopPropagation(); closeMoreMenu(); switchTab('othersale')"><span class="nav-icon">🎁</span>Other Sale</div>
       <div class="more-menu-item" data-tab="settings" onclick="event.stopPropagation(); closeMoreMenu(); switchTab('settings')"><span class="nav-icon">⚙️</span>Settings</div>
     </div>
   </button>
@@ -978,7 +929,7 @@ async function pushToCloud(){
 
 function rerenderAll(){
   renderDashboard(); renderSalesTab(); renderExpensesTab(); renderStockTab();
-  renderBankTab(); renderLedgerTab(); renderOtherSaleTab(); renderSettings();
+  renderBankTab(); renderLedgerTab(); renderSettings();
 }
 
 /* ---------- BOTTOM NAV (mobile) ---------- */
@@ -1296,7 +1247,7 @@ function switchTab(tab){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
   document.querySelectorAll('.tabpanel').forEach(p=>p.classList.toggle('active', p.id === 'tab-'+tab));
   // bottom-nav (mobile) highlight — "More" tab active jab secondary tab khula ho
-  const secondaryTabs = ['stock','bank','othersale','settings'];
+  const secondaryTabs = ['stock','bank','settings'];
   document.querySelectorAll('.bottom-nav .nav-item[data-tab]').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
   document.querySelectorAll('.more-menu-item[data-tab]').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
   const more = document.getElementById('navMore');
@@ -1308,7 +1259,6 @@ function switchTab(tab){
   if(tab==='stock') renderStockTab();
   if(tab==='bank') renderBankTab();
   if(tab==='ledger') renderLedgerTab();
-  if(tab==='othersale') renderOtherSaleTab();
   if(tab==='settings') renderSettings();
 }
 
@@ -1927,18 +1877,22 @@ function fillExpCategoryFilter(){
 }
 
 function renderExpenseSummaryKpis(monthF, catF){
-  const rows = state.expenses.filter(r => r.direction!=='in'
-    && (monthF==='all' || r.date.slice(0,7)===monthF)
+  const filtered = state.expenses.filter(r =>
+    (monthF==='all' || r.date.slice(0,7)===monthF)
     && (catF==='all' || r.category===catF));
+  const rows = filtered.filter(r => r.direction!=='in');
+  const inRows = filtered.filter(r => r.direction==='in');
   const totalExp = rows.reduce((a,r)=>a+Number(r.amount||0),0);
+  const totalIn = inRows.reduce((a,r)=>a+Number(r.amount||0),0);
   const cashExp = rows.filter(r=>r.source==='Cash').reduce((a,r)=>a+Number(r.amount||0),0);
   const bankExp = rows.filter(r=>r.source==='Bank').reduce((a,r)=>a+Number(r.amount||0),0);
-  const catLabel = catF==='all' ? 'Total Expenses (Cash + Bank)' : `Total: ${catF}`;
+  const catLabel = catF==='all' ? 'Total Expenses (Cash + Bank)' : `Kharch: ${catF}`;
   document.getElementById('expSummaryKpiRow').innerHTML = `
     <div class="kpi stat-warning"><div class="label">${catLabel}</div><div class="value">${fmt(totalExp)}</div></div>
+    <div class="kpi stat-good"><div class="label">${catF==='all' ? 'Total Cash Aaya (In)' : `Cash Aaya: ${catF}`}</div><div class="value">${fmt(totalIn)}</div></div>
     <div class="kpi stat-bank"><div class="label">Cash Expenses</div><div class="value">${fmt(cashExp)}</div></div>
     <div class="kpi stat-info"><div class="label">Bank Expenses</div><div class="value">${fmt(bankExp)}</div></div>
-    <div class="kpi stat-neutral"><div class="label">Entries</div><div class="value">${rows.length}</div></div>
+    <div class="kpi stat-neutral"><div class="label">Entries</div><div class="value">${filtered.length}</div></div>
   `;
 }
 
@@ -2279,9 +2233,8 @@ function onLedgerPersonChange(){
 }
 
 function renderLedgerPersonSummary(){
-  // Devana + Levana + Other Sale (product-udhaar) ek hi person ke liye NET
-  // kiya jaata hai — sab "trade" relationship hain. Investment alag rakha
-  // jaata hai (wo capital hai, trade nahi).
+  // Devana + Levana ek hi person ke liye NET kiya jaata hai (trade udhaar/lena-dena
+  // ek hi relationship hai). Investment alag rakha jaata hai (wo capital hai, trade nahi).
   const groups = {};
   state.ledger.forEach(r=>{
     if(!groups[r.person]) groups[r.person] = { tradeNet: 0, investmentNet: 0 };
@@ -2290,17 +2243,11 @@ function renderLedgerPersonSummary(){
     else if(r.type==='Devana') groups[r.person].tradeNet += signed;
     else if(r.type==='Levana') groups[r.person].tradeNet -= signed;
   });
-  // Other Sale: "Sale Hui" (add) = wo hume dena badhta hai, bilkul Levana jaisa.
-  state.otherSales.forEach(r=>{
-    if(!groups[r.person]) groups[r.person] = { tradeNet: 0, investmentNet: 0 };
-    const signed = (r.direction==='subtract' ? -1 : 1) * Number(r.amount||0);
-    groups[r.person].tradeNet -= signed;
-  });
 
   const rows = [];
   Object.keys(groups).forEach(person=>{
     const g = groups[person];
-    if(Math.abs(g.tradeNet) > 0.001) rows.push({ person, label: 'Devana/Levana/Other Sale', net: g.tradeNet });
+    if(Math.abs(g.tradeNet) > 0.001) rows.push({ person, label: 'Devana/Levana', net: g.tradeNet });
     if(Math.abs(g.investmentNet) > 0.001) rows.push({ person, label: 'Investment', net: g.investmentNet });
   });
   rows.sort((a,b)=> a.person.localeCompare(b.person) || a.label.localeCompare(b.label));
@@ -2403,126 +2350,6 @@ function deleteLedger(id){
     state.ledger = state.ledger.filter(r=>r.id!==id);
     saveState();
     renderLedgerTab();
-    toast('Entry delete ho gayi — Settings ke Delete History se wapas la sakte ho.');
-  }});
-}
-
-/* ---------- OTHER SALE (product sale to a person, tracked separately) ---------- */
-function renderOtherSaleTab(){
-  if(!document.getElementById('otherSaleDate').value) document.getElementById('otherSaleDate').value = new Date().toISOString().slice(0,10);
-  fillOtherSalePersonSelect();
-  renderOtherSaleTable();
-}
-
-function fillOtherSalePersonSelect(){
-  const sel = document.getElementById('otherSalePerson');
-  const current = sel.value;
-  const names = Array.from(new Set(state.otherSales.map(r=>r.person).filter(Boolean))).sort();
-  sel.innerHTML = '<option value="">-- Person chuno --</option>' +
-    names.map(n=>`<option value="${n}">${n}</option>`).join('') +
-    '<option value="__new__">+ Naya Person</option>';
-  if(names.includes(current)) sel.value = current;
-}
-
-function onOtherSalePersonChange(){
-  const sel = document.getElementById('otherSalePerson');
-  if(sel.value === '__new__'){
-    sel.value = '';
-    showPromptModal({
-      title: 'Naya Person',
-      body: 'Naya person ka naam:',
-      defaultValue: '',
-      confirmLabel: 'Add',
-      onConfirm: (value) => {
-        const name = (value || '').trim();
-        if(!name) return;
-        const opt = document.createElement('option');
-        opt.value = name; opt.textContent = name;
-        sel.insertBefore(opt, sel.lastElementChild);
-        sel.value = name;
-      }
-    });
-  }
-}
-
-function renderOtherSaleTable(){
-  let rows = [...state.otherSales].sort((a,b)=> b.date.localeCompare(a.date));
-  if(rows.length===0){
-    document.getElementById('otherSaleTable').innerHTML = '<tbody><tr><td class="empty-note">Koi entry nahi hai.</td></tr></tbody>';
-    return;
-  }
-  const body = rows.map(r=>{
-    const isSub = r.direction === 'subtract';
-    return `<tr style="background:${monthTint(r.date.slice(0,7))}">
-      <td>${r.date}</td>
-      <td>${r.person}</td>
-      <td>${r.product || ''}</td>
-      <td class="num" style="color:${isSub?'var(--good)':'var(--critical)'};font-weight:700">${isSub?'-':'+'}${fmt(r.amount)}</td>
-      <td>${r.note || ''}</td>
-      <td>
-        <button class="link-edit" onclick="editOtherSale('${r.id}')">Edit</button>
-        <button class="danger" onclick="deleteOtherSale('${r.id}')">Delete</button>
-      </td>
-    </tr>`;
-  }).join('');
-  document.getElementById('otherSaleTable').innerHTML = `
-    <thead><tr><th>Date</th><th>Person</th><th>Product</th><th class="num">Amount</th><th>Note</th><th>Actions</th></tr></thead>
-    <tbody>${body}</tbody>`;
-}
-
-function submitOtherSale(ev){
-  ev.preventDefault();
-  const direction = document.getElementById('otherSaleDirection').value;
-  const date = document.getElementById('otherSaleDate').value;
-  const person = document.getElementById('otherSalePerson').value.trim();
-  const product = document.getElementById('otherSaleProduct').value.trim();
-  const amount = parseFloat(document.getElementById('otherSaleAmount').value)||0;
-  const note = document.getElementById('otherSaleNote').value.trim();
-  const editId = document.getElementById('otherSaleEditId').value;
-
-  if(!person || person === '__new__'){ toast('Pehle ek Person chunein ya naya add karein.'); return false; }
-
-  if(editId){
-    const r = state.otherSales.find(r=>r.id===editId);
-    if(r){ r.direction=direction; r.date=date; r.person=person; r.product=product; r.amount=amount; r.note=note; }
-  } else {
-    state.otherSales.push({ id: uid(), direction, date, person, product, amount, note });
-  }
-  saveState();
-  cancelOtherSaleEdit();
-  renderOtherSaleTab();
-  toast('Entry save ho gayi.');
-  return false;
-}
-
-function editOtherSale(id){
-  const r = state.otherSales.find(r=>r.id===id);
-  if(!r) return;
-  document.getElementById('otherSaleEditId').value = r.id;
-  document.getElementById('otherSaleDirection').value = r.direction || 'add';
-  document.getElementById('otherSaleDate').value = r.date;
-  document.getElementById('otherSalePerson').value = r.person;
-  document.getElementById('otherSaleProduct').value = r.product || '';
-  document.getElementById('otherSaleAmount').value = r.amount;
-  document.getElementById('otherSaleNote').value = r.note || '';
-  document.getElementById('otherSaleFormTitle').textContent = 'Edit Entry';
-  document.getElementById('otherSaleCancelBtn').style.display = 'inline-block';
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-function cancelOtherSaleEdit(){
-  document.getElementById('otherSaleForm').reset();
-  document.getElementById('otherSaleEditId').value = '';
-  document.getElementById('otherSaleDate').value = new Date().toISOString().slice(0,10);
-  document.getElementById('otherSaleFormTitle').textContent = 'Add Entry';
-  document.getElementById('otherSaleCancelBtn').style.display = 'none';
-}
-function deleteOtherSale(id){
-  showConfirmModal({ title: 'Delete Entry', body: 'Ye entry delete karni hai?', confirmLabel: 'Delete', onConfirm: () => {
-    const r = state.otherSales.find(r=>r.id===id);
-    if(r) logDeletion('Other Sale', `${r.date} · ${r.person} · ${r.product || ''} · ${fmt(r.amount)}`, r);
-    state.otherSales = state.otherSales.filter(r=>r.id!==id);
-    saveState();
-    renderOtherSaleTab();
     toast('Entry delete ho gayi — Settings ke Delete History se wapas la sakte ho.');
   }});
 }
@@ -2686,7 +2513,7 @@ function importBackup(ev){
           if(state.openingBalance === undefined) state.openingBalance = null;
           normalizeState();
           saveState();
-          renderDashboard(); renderSalesTab(); renderExpensesTab(); renderStockTab(); renderBankTab(); renderLedgerTab(); renderOtherSaleTab(); renderSettings();
+          renderDashboard(); renderSalesTab(); renderExpensesTab(); renderStockTab(); renderBankTab(); renderLedgerTab(); renderSettings();
           toast('Backup import ho gaya.');
         }
       });
@@ -2705,7 +2532,7 @@ function clearAllData(){
     onConfirm: () => {
       state = { panels: [], sales: [], expenses: [], stock: [], bankBalance: [], ledger: [], openingBalance: null, cashBook: [], otherSales: [], deletedHistory: [] };
       saveState();
-      renderDashboard(); renderSalesTab(); renderExpensesTab(); renderStockTab(); renderBankTab(); renderLedgerTab(); renderOtherSaleTab(); renderSettings();
+      renderDashboard(); renderSalesTab(); renderExpensesTab(); renderStockTab(); renderBankTab(); renderLedgerTab(); renderSettings();
       toast('Sara data delete ho gaya.');
     }
   });
