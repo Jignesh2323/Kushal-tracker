@@ -375,6 +375,13 @@
       <div class="kpi-row" id="ledgerTotalKpiRow" style="margin-bottom:0;"></div>
     </div>
 
+    <div class="card" id="profitCalcCard" style="display:none;">
+      <h2>🧮 Monthly Profit ka Pura Hisab <span class="sub" id="profitCalcSub"></span></h2>
+      <div class="table-scroll">
+        <table id="profitCalcTable"></table>
+      </div>
+    </div>
+
     <div class="grid-2">
       <div class="card">
         <h2>Platform-wise Sale Share <span class="sub">% of total selling</span></h2>
@@ -1514,6 +1521,76 @@ function monthlyProfitFormula(month){
   return cur - prev;
 }
 
+// netWorthAdjusted ke SAME numbers, bas alag-alag tukdo me — profit
+// breakdown card ke liye. Logic yaha aur netWorthAdjusted me hamesha
+// ek jaisa rehna chahiye.
+function netWorthParts(month){
+  if(state.openingBalance && state.openingBalance.month === month){
+    return { ob: true, total: Number(state.openingBalance.value) };
+  }
+  const stockRow = state.stock.find(r=>r.month===month);
+  if(!stockRow) return null;
+  const bank = state.bankBalance.filter(r=>r.month===month).reduce((a,r)=>a+Number(r.value||0),0);
+  const portal = state.sales.filter(r=>r.month===month).reduce((a,r)=>a+Number(r.portal||0),0);
+  const stock = Number(stockRow.value||0);
+  const cash = cashAsOf(month);
+  const levana = cumulativeLedger('Levana', month);
+  const investment = cumulativeLedger('Investment', month);
+  const devana = cumulativeLedger('Devana', month);
+  const upad = cumulativeUpad(month);
+  return { ob: false, bank, portal, stock, cash, levana, investment, devana, upad,
+           total: (bank + portal + stock + cash + levana) - investment - devana + upad };
+}
+
+function renderProfitCalc(month){
+  const card = document.getElementById('profitCalcCard');
+  if(!card) return;
+  const obMonth = state.openingBalance ? state.openingBalance.month : null;
+  const isMonth = month !== 'all' && !isYearScope(month);
+  if(!isMonth || (obMonth && month <= obMonth)){ card.style.display = 'none'; return; }
+  const prevM = prevMonthOf(month);
+  const cur = netWorthParts(month);
+  const prev = netWorthParts(prevM);
+  if(!cur || cur.ob || !prev){ card.style.display = 'none'; return; }
+  card.style.display = '';
+  const profit = cur.total - prev.total;
+  document.getElementById('profitCalcSub').textContent =
+    `${monthLabel(month)} ka Net Worth − ${monthLabel(prevM)} ka Net Worth`;
+  const pv = (key) => prev.ob ? '—' : fmt(prev[key]);
+  const items = [
+    ['+ Bank Balance', 'bank'],
+    ['+ Portal Balance', 'portal'],
+    ['+ Stock', 'stock'],
+    ['+ Cash', 'cash'],
+    ['+ Levana (lena baki)', 'levana'],
+    ['− Investment', 'investment'],
+    ['− Devana (dena baki)', 'devana'],
+    ['+ Upad (ab tak kul)', 'upad'],
+  ];
+  const body = items.map(([label, key]) => `
+    <tr>
+      <td>${label}</td>
+      <td class="num">${pv(key)}</td>
+      <td class="num">${fmt(cur[key])}</td>
+    </tr>`).join('');
+  const profitColor = profit >= 0 ? 'var(--good)' : 'var(--critical)';
+  document.getElementById('profitCalcTable').innerHTML = `
+    <thead><tr><th>Item</th><th class="num">${monthLabel(prevM)}</th><th class="num">${monthLabel(month)}</th></tr></thead>
+    <tbody>
+      ${body}
+      <tr style="font-weight:700; border-top:2px solid var(--border);">
+        <td>Net Worth${prev.ob ? ' <span style="font-weight:400;color:var(--muted)">(pichla month = Opening Balance, fixed)</span>' : ''}</td>
+        <td class="num">${fmt(prev.total)}</td>
+        <td class="num">${fmt(cur.total)}</td>
+      </tr>
+      <tr>
+        <td colspan="3" style="font-weight:700; color:${profitColor}; font-size:15px;">
+          Monthly Profit = ${fmt(cur.total)} − ${fmt(prev.total)} = ${profit < 0 ? '-' : ''}${fmt(Math.abs(profit))}
+        </td>
+      </tr>
+    </tbody>`;
+}
+
 function monthlyProfitAllTime(){
   // Opening Balance ke baad ke months hi reliable hain — usse pehle ka
   // historical data (purani Excel) sirf reference ke liye hai.
@@ -1597,6 +1674,7 @@ function renderDashboard(){
     <div class="kpi stat-warning"><div class="label">Total Upad (personal draw)</div><div class="value">${fmt(ledgerTotals.upad)}</div></div>
     ${monthUpadKpi}
   `;
+  renderProfitCalc(month);
 }
 
 function renderDonut(stats){
