@@ -2258,7 +2258,9 @@ function renderLedgerPersonSummary(){
   const rows = [];
   Object.keys(groups).forEach(person=>{
     const g = groups[person];
-    if(Math.abs(g.tradeNet) > 0.001) rows.push({ person, label: 'Devana/Levana', net: g.tradeNet });
+    // Net ke hisaab se type khud tay hota hai: lena baki (green) = Levana,
+    // dena baki (red) = Devana.
+    if(Math.abs(g.tradeNet) > 0.001) rows.push({ person, label: g.tradeNet > 0 ? 'Devana' : 'Levana', net: g.tradeNet });
     if(Math.abs(g.investmentNet) > 0.001) rows.push({ person, label: 'Investment', net: g.investmentNet });
   });
   rows.sort((a,b)=> a.person.localeCompare(b.person) || a.label.localeCompare(b.label));
