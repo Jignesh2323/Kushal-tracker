@@ -204,6 +204,92 @@
   .swatch.active{color:var(--accent);}
   .sheet .close-btn{width:100%; margin-top:18px;}
 
+
+  /* ---------- HERO v2 (compact, app-like) ---------- */
+  .hero-banner{flex-direction:column; flex-wrap:nowrap; align-items:stretch; gap:10px; padding:18px 22px 26px;}
+  .hero-top, .hero-greet, .hero-desc{width:100%; min-width:0;}
+  .hero-top{position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between; gap:12px;}
+  .brand{display:flex; align-items:center; gap:12px; min-width:0; flex:1 1 0;}
+  .brand-logo{
+    width:46px; height:46px; border-radius:15px; display:flex; align-items:center; justify-content:center; font-size:22px; flex:0 0 auto;
+    background:linear-gradient(180deg, rgba(255,255,255,.34), rgba(255,255,255,.12)); border:1px solid rgba(255,255,255,.5);
+    box-shadow:0 1px 0 rgba(255,255,255,.6) inset, 0 -2px 0 rgba(0,0,0,.15) inset, 0 8px 18px -8px rgba(0,0,0,.5);
+  }
+  .hero-banner .eyebrow{font-size:9.5px; letter-spacing:.14em; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .hero-banner h1{font-size:22px; line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .brand .title-block{min-width:0;}
+  .hero-actions{display:flex; gap:8px; align-items:center; flex:0 0 auto;}
+  .icon-btn{
+    width:42px; height:42px; min-height:0; padding:0; border-radius:14px; font-size:19px; color:#fff; cursor:pointer;
+    background:linear-gradient(180deg, rgba(255,255,255,.3), rgba(255,255,255,.12)); border:1px solid rgba(255,255,255,.45);
+    box-shadow:0 1px 0 rgba(255,255,255,.5) inset, 0 -2px 0 rgba(0,0,0,.15) inset, 0 6px 14px -6px rgba(0,0,0,.45);
+    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  }
+  .icon-btn:active{transform:translateY(2px);}
+  .sync-badge{padding:7px 11px; font-size:11.5px;}
+  .hero-desc{position:relative; z-index:1; margin:2px 0 0; color:rgba(255,255,255,.88); font-size:12.5px; max-width:640px; line-height:1.5;}
+  .hero-greet{position:relative; z-index:1; display:flex; align-items:center; gap:8px; color:rgba(255,255,255,.95); font-size:13px; font-weight:600;}
+  .hero-greet .chip{background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.35); border-radius:999px; padding:4px 10px; font-size:11.5px; font-weight:600; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);}
+
+  /* Dashboard month pill (floats over hero bottom on mobile) */
+  #tab-dashboard > .row-controls .field{min-width:0;}
+  #tab-dashboard > .row-controls label{display:none;}
+  #tab-dashboard > .row-controls select{
+    border-radius:999px; padding:10px 40px 10px 16px; font-weight:700; min-height:44px;
+    background-color:var(--surface-1); box-shadow:0 1px 0 var(--hi) inset, 0 10px 24px -10px rgba(20,22,43,.35);
+  }
+
+  /* ---------- BOTTOM NAV v2 (floating pill + center action) ---------- */
+  .bottom-nav{
+    left:12px; right:12px; bottom:calc(10px + env(safe-area-inset-bottom)); max-width:560px;
+    border:1px solid var(--border); border-radius:26px; padding:6px 8px;
+    box-shadow:0 1px 0 var(--hi) inset, 0 18px 40px -16px rgba(20,22,43,.5), 0 2px 6px rgba(20,22,43,.08);
+    overflow:visible;
+  }
+  .nav-item{padding:5px 2px;}
+  .nav-item .nav-label{font-size:10px;}
+  .nav-fab-wrap{flex:0 0 72px; display:flex; align-items:center; justify-content:center; position:relative;}
+  .nav-fab{
+    width:58px; height:58px; border-radius:50%; margin-top:-30px; color:#fff; font-size:30px; line-height:1; font-weight:300; padding:0; min-height:0; border:3px solid var(--surface-1);
+    background:linear-gradient(160deg, var(--accent-2), var(--accent) 60%, var(--accent-dark));
+    box-shadow:0 1px 0 rgba(255,255,255,.4) inset, 0 -3px 0 rgba(0,0,0,.2) inset, 0 10px 24px -6px var(--accent-glow), 0 4px 10px rgba(0,0,0,.2);
+    display:flex; align-items:center; justify-content:center; transition:transform .15s ease;
+  }
+  .nav-fab:active{transform:scale(.94) translateY(2px);}
+  .nav-fab.open{transform:rotate(45deg);}
+  .quick-menu{
+    position:absolute; bottom:calc(100% + 10px); left:50%; transform:translateX(-50%) translateY(10px); min-width:230px;
+    background:linear-gradient(180deg, var(--surface-1), var(--surface-2)); border:1px solid var(--border); border-radius:18px; padding:8px;
+    box-shadow:0 1px 0 var(--hi) inset, var(--shadow-lg); display:none; flex-direction:column; gap:4px; z-index:80;
+  }
+  .quick-menu.open{display:flex; animation:pop .2s cubic-bezier(.2,.9,.3,1.2) both;}
+  .quick-item{
+    display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:12px; border:none; background:none; box-shadow:none; min-height:0;
+    font-family:'Inter',sans-serif; font-size:14px; font-weight:600; color:var(--text-primary); text-align:left; cursor:pointer;
+  }
+  .quick-item:hover, .quick-item:active{background:var(--neutral-bg); transform:none;}
+  .quick-item .qi{width:36px; height:36px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:18px; background:var(--paper-dark); box-shadow:0 1px 0 var(--hi) inset;}
+
+  @media(max-width:640px){
+    .hero-banner{padding:14px 16px 46px; margin-bottom:0; border-radius:0 0 30px 30px;}
+    .hero-banner h1{font-size:19px;}
+    .brand-logo{width:40px; height:40px; border-radius:13px; font-size:19px;}
+    .sync-badge{padding:6px 9px; font-size:10.5px;}
+    .icon-btn{width:38px; height:38px; font-size:17px;}
+    .hero-top{gap:8px;}
+    .hero-banner .eyebrow{display:none;}
+    .hero-desc{display:none;}
+    body[data-tab="dashboard"] .hero-banner{padding-bottom:52px;}
+    #tab-dashboard > .row-controls{margin:-30px 0 14px; position:relative; z-index:2; justify-content:center;}
+    #tab-dashboard > .row-controls select{min-width:200px; text-align:center; text-align-last:center;}
+    .tabpanel.active{padding-top:16px;}
+    body[data-tab="dashboard"] .tabpanel.active{padding-top:0;}
+    .wrap{padding-bottom:calc(96px + env(safe-area-inset-bottom));}
+  }
+  @media(min-width:641px){
+    #tab-dashboard > .row-controls{margin-top:0;}
+  }
+
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   html{-webkit-text-size-adjust:100%;}
@@ -555,15 +641,15 @@
 <div class="wrap">
 
   <div class="hero-banner">
-    <div class="title-block">
-      <div class="eyebrow">Amazon · Flipkart · Meesho</div>
-      <h1>Sales Tracker (Kushal)</h1>
-      <p>Monthly sale, payment aur profit — data cloud me save hota hai, isliye ye file jis bhi PC me kholo hamesha latest hisab dikhega aur koi bhi entry dal sakta hai. Settings tab se backup zaroor le lena.</p>
+    <div class="hero-top">
+      <div class="brand"><span class="brand-logo">📈</span><div class="title-block"><div class="eyebrow">Amazon · Flipkart · Meesho</div><h1>Sales Tracker (Kushal)</h1></div></div>
+      <div class="hero-actions">
+        <span id="syncBadge" class="sync-badge">☁️ Loading...</span>
+        <button class="icon-btn" id="themeBtn" onclick="openThemeSheet()" title="Theme">🎨</button>
+      </div>
     </div>
-    <div style="display:flex; gap:10px; align-items:center; position:relative; z-index:1;">
-      <span id="syncBadge" class="sync-badge">☁️ Loading...</span>
-      <button class="theme-btn" id="themeBtn" onclick="openThemeSheet()">🌓 Theme</button>
-    </div>
+    <div class="hero-greet" id="heroGreet"></div>
+    <p class="hero-desc">Monthly sale, payment aur profit — data cloud me save hota hai, isliye ye file jis bhi PC me kholo hamesha latest hisab dikhega aur koi bhi entry dal sakta hai. Settings tab se backup zaroor le lena.</p>
   </div>
 
   <nav class="tabs">
@@ -1015,11 +1101,20 @@
 <nav class="bottom-nav" id="bottomNav">
   <button class="nav-item active" data-tab="dashboard" onclick="switchTab('dashboard')"><span class="nav-icon">📊</span><span class="nav-label">Dashboard</span></button>
   <button class="nav-item" data-tab="sales" onclick="switchTab('sales')"><span class="nav-icon">🛒</span><span class="nav-label">Sale</span></button>
+  <div class="nav-fab-wrap">
+    <button class="nav-fab" id="navFab" onclick="toggleQuickMenu(event)" aria-label="Quick add">+</button>
+    <div class="quick-menu" id="quickMenu">
+      <button class="quick-item" onclick="quickAdd('sales')"><span class="qi">🛒</span>Naya Sale</button>
+      <button class="quick-item" onclick="quickAdd('expenses')"><span class="qi">💸</span>Naya Kharch / Cash</button>
+      <button class="quick-item" onclick="quickAdd('ledger')"><span class="qi">🤝</span>Udhaar Entry</button>
+      <button class="quick-item" onclick="quickAdd('stock')"><span class="qi">📦</span>Stock Update</button>
+    </div>
+  </div>
   <button class="nav-item" data-tab="expenses" onclick="switchTab('expenses')"><span class="nav-icon">💸</span><span class="nav-label">Expense</span></button>
-  <button class="nav-item" data-tab="ledger" onclick="switchTab('ledger')"><span class="nav-icon">🤝</span><span class="nav-label">Udhaar</span></button>
   <button class="nav-item nav-more" id="navMore" onclick="toggleMoreMenu(event)">
     <span class="nav-icon">⋯</span><span class="nav-label">More</span>
     <div class="more-menu" id="more-menu">
+      <div class="more-menu-item" data-tab="ledger" onclick="event.stopPropagation(); closeMoreMenu(); switchTab('ledger')"><span class="nav-icon">🤝</span>Udhaar Khata</div>
       <div class="more-menu-item" data-tab="stock" onclick="event.stopPropagation(); closeMoreMenu(); switchTab('stock')"><span class="nav-icon">📦</span>Stock</div>
       <div class="more-menu-item" data-tab="bank" onclick="event.stopPropagation(); closeMoreMenu(); switchTab('bank')"><span class="nav-icon">🏦</span>Bank Balance</div>
       <div class="more-menu-item" data-tab="settings" onclick="event.stopPropagation(); closeMoreMenu(); switchTab('settings')"><span class="nav-icon">⚙️</span>Settings</div>
@@ -1513,10 +1608,11 @@ function toggleTheme(){
 
 /* ---------- TABS ---------- */
 function switchTab(tab){
+  document.body.dataset.tab = tab;
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
   document.querySelectorAll('.tabpanel').forEach(p=>p.classList.toggle('active', p.id === 'tab-'+tab));
   // bottom-nav (mobile) highlight — "More" tab active jab secondary tab khula ho
-  const secondaryTabs = ['stock','bank','settings'];
+  const secondaryTabs = ['ledger','stock','bank','settings'];
   document.querySelectorAll('.bottom-nav .nav-item[data-tab]').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
   document.querySelectorAll('.more-menu-item[data-tab]').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
   const more = document.getElementById('navMore');
@@ -2908,7 +3004,7 @@ gu: {
   "Amazon · Flipkart · Meesho": "એમેઝોન · ફ્લિપકાર્ટ · મીશો",
   "Monthly sale, payment aur profit — data cloud me save hota hai, isliye ye file jis bhi PC me kholo hamesha latest hisab dikhega aur koi bhi entry dal sakta hai. Settings tab se backup zaroor le lena.": "માસિક વેચાણ, પેમેન્ટ અને નફો — ડેટા ક્લાઉડમાં સેવ થાય છે, એટલે આ ફાઇલ કોઈ પણ PC માં ખોલો હંમેશા લેટેસ્ટ હિસાબ દેખાશે અને કોઈ પણ એન્ટ્રી કરી શકે છે. Settings ટેબમાંથી બેકઅપ જરૂર લઈ લેજો.",
   "☁️ Live": "☁️ લાઇવ", "☁️ Saved": "☁️ સેવ થયું", "⏳ Saving...": "⏳ સેવ થાય છે...", "⚠️ Save failed — retry...": "⚠️ સેવ ન થયું — ફરી પ્રયત્ન...",
-  "🌓 Theme": "🌓 થીમ", "🎨 Theme": "🎨 થીમ", "Apni pasand ka look chuno — sirf is device ke liye save hota hai.": "તમારી પસંદનો લુક પસંદ કરો — ફક્ત આ ડિવાઇસ માટે સેવ થાય છે.", "Mode": "મોડ", "Color": "રંગ", "Done": "થઈ ગયું", "🌗 Auto": "🌗 ઓટો", "☀️ Light": "☀️ લાઇટ", "🌙 Dark": "🌙 ડાર્ક", "Indigo": "ઇન્ડિગો", "Ocean": "સમુદ્રી", "Emerald": "લીલો", "Sunset": "સૂર્યાસ્ત", "Rose": "ગુલાબી", "Royal": "રોયલ", "Gold": "સોનેરી",
+  "🌓 Theme": "🌓 થીમ", "Naya Sale": "નવું વેચાણ", "Naya Kharch / Cash": "નવો ખર્ચ / રોકડ", "Udhaar Entry": "ઉધાર એન્ટ્રી", "Stock Update": "સ્ટોક અપડેટ", "Udhaar Khata": "ઉધાર ખાતું", "🎨 Theme": "🎨 થીમ", "Apni pasand ka look chuno — sirf is device ke liye save hota hai.": "તમારી પસંદનો લુક પસંદ કરો — ફક્ત આ ડિવાઇસ માટે સેવ થાય છે.", "Mode": "મોડ", "Color": "રંગ", "Done": "થઈ ગયું", "🌗 Auto": "🌗 ઓટો", "☀️ Light": "☀️ લાઇટ", "🌙 Dark": "🌙 ડાર્ક", "Indigo": "ઇન્ડિગો", "Ocean": "સમુદ્રી", "Emerald": "લીલો", "Sunset": "સૂર્યાસ્ત", "Rose": "ગુલાબી", "Royal": "રોયલ", "Gold": "સોનેરી",
   "📊 Dashboard": "📊 ડેશબોર્ડ", "🛒 Sale Entry": "🛒 વેચાણ એન્ટ્રી", "💸 Expenses & Cash": "💸 ખર્ચ અને રોકડ", "📦 Stock": "📦 સ્ટોક",
   "🏦 Bank Balance": "🏦 બેંક બેલેન્સ", "🤝 Udhaar Khata": "🤝 ઉધાર ખાતું", "⚙️ Settings": "⚙️ સેટિંગ્સ",
   "Dashboard": "ડેશબોર્ડ", "Sale": "વેચાણ", "Expense": "ખર્ચ", "Udhaar": "ઉધાર", "More": "વધુ", "Settings": "સેટિંગ્સ",
@@ -2992,7 +3088,7 @@ gu: {
 },
 en: {
   "Monthly sale, payment aur profit — data cloud me save hota hai, isliye ye file jis bhi PC me kholo hamesha latest hisab dikhega aur koi bhi entry dal sakta hai. Settings tab se backup zaroor le lena.": "Monthly sales, payments and profit — data is saved in the cloud, so this file shows the latest figures on any PC and anyone can add entries. Do take a backup from the Settings tab.",
-  "☁️ Saved": "☁️ Saved", "⏳ Saving...": "⏳ Saving...", "Apni pasand ka look chuno — sirf is device ke liye save hota hai.": "Pick the look you like — saved only for this device.",
+  "☁️ Saved": "☁️ Saved", "⏳ Saving...": "⏳ Saving...", "Naya Sale": "New Sale", "Naya Kharch / Cash": "New Expense / Cash", "Udhaar Entry": "Ledger Entry", "Udhaar Khata": "Credit Ledger", "Apni pasand ka look chuno — sirf is device ke liye save hota hai.": "Pick the look you like — saved only for this device.",
   "🤝 Udhaar Khata": "🤝 Credit Ledger", "Udhaar": "Ledger",
   "All Time": "All Time", "(ek month select karein)": "(select one month)",
   "Monthly Profit = (Bank Balance + Portal Balance + Stock + Cash + Levana − Investment − Devana + Upad) is month ka − pichle month ka. Isme Stock/Cash/Bank Balance us month ke liye zaroor bhare hone chahiye, warna \"—\" dikhega.": "Monthly Profit = (Bank Balance + Portal Balance + Stock + Cash + Receivables − Investment − Payables + Drawings) for this month − previous month. Stock/Cash/Bank Balance must be filled for that month, otherwise \"—\" is shown.",
@@ -3084,6 +3180,7 @@ function translateNode(root){
   root.querySelectorAll && root.querySelectorAll('[placeholder]').forEach(el=>{ if(el.__origPh===undefined) el.__origPh=el.placeholder; el.placeholder = tr(el.__origPh); });
 }
 function applyLang(){
+  if(typeof renderGreeting==='function') setTimeout(renderGreeting,0);
   const lang = getLang();
   document.documentElement.lang = lang==='gu' ? 'gu' : 'en';
   document.documentElement.classList.toggle('lang-gu', lang==='gu');
@@ -3133,6 +3230,36 @@ function openThemeSheet(){ syncDarkAuto(); applyAccent(); document.getElementByI
 function closeThemeSheet(){ document.getElementById('themeSheet').classList.remove('open'); }
 if(window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncDarkAuto);
 applyAccent(); syncDarkAuto();
+
+
+/* ---------- HERO GREETING + QUICK ADD ---------- */
+function renderGreeting(){
+  const el = document.getElementById('heroGreet'); if(!el) return;
+  const lang = (typeof getLang==='function') ? getLang() : 'hi';
+  const loc = lang==='gu' ? 'gu-IN' : 'en-IN';
+  const d = new Date();
+  let dateStr; try{ dateStr = d.toLocaleDateString(loc, {weekday:'long', day:'numeric', month:'short'}); }catch(e){ dateStr = d.toDateString(); }
+  const h = d.getHours();
+  const greet = lang==='gu' ? (h<12?'શુભ સવાર':h<17?'શુભ બપોર':'શુભ સાંજ') : lang==='en' ? (h<12?'Good morning':h<17?'Good afternoon':'Good evening') : (h<12?'Suprabhat':h<17?'Namaste':'Shubh sandhya');
+  el.innerHTML = `<span>${greet} 👋</span><span class="chip">📅 ${dateStr}</span>`;
+}
+function toggleQuickMenu(e){
+  e && e.stopPropagation();
+  const m = document.getElementById('quickMenu'), f = document.getElementById('navFab');
+  const open = !m.classList.contains('open');
+  m.classList.toggle('open', open); f.classList.toggle('open', open);
+  if(typeof closeMoreMenu==='function') closeMoreMenu();
+}
+function closeQuickMenu(){ document.getElementById('quickMenu')?.classList.remove('open'); document.getElementById('navFab')?.classList.remove('open'); }
+function quickAdd(tab){
+  closeQuickMenu(); switchTab(tab);
+  const formId = {sales:'saleForm', expenses:'expForm', ledger:'ledgerForm', stock:'stockForm'}[tab];
+  const form = document.getElementById(formId);
+  if(form){ form.scrollIntoView({behavior:'smooth', block:'start'}); const first = form.querySelector('input:not([type=hidden]), select'); if(first) setTimeout(()=>first.focus(), 350); }
+}
+document.addEventListener('click', e => { if(!e.target.closest('.nav-fab-wrap')) closeQuickMenu(); });
+renderGreeting();
+setInterval(renderGreeting, 60000);
 
 /* ---------- INIT ---------- */
 // Pehle embedded/local data se turant render (blank screen na dikhe),
