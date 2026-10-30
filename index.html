@@ -929,7 +929,7 @@
         <input type="hidden" id="ledgerEditId">
         <div class="field">
           <label for="ledgerType">Type</label>
-          <select id="ledgerType">
+          <select id="ledgerType" onchange="suggestLedgerMode()">
             <option value="Investment">Investment (loan liya)</option>
             <option value="Levana">Levana (lena hai)</option>
             <option value="Devana">Devana (dena hai)</option>
@@ -937,9 +937,17 @@
         </div>
         <div class="field">
           <label for="ledgerDirection">Entry</label>
-          <select id="ledgerDirection">
+          <select id="ledgerDirection" onchange="suggestLedgerMode()">
             <option value="add">➕ Badhao</option>
             <option value="subtract">➖ Ghatao (payment/settle)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="ledgerMode">Paisa kaise gaya/aaya</label>
+          <select id="ledgerMode">
+            <option value="cash">💵 Cash se (Cash Balance badlega)</option>
+            <option value="bank">🏦 Bank se (Cash par asar nahi)</option>
+            <option value="credit">📦 Maal / Udhaar (paisa nahi gaya)</option>
           </select>
         </div>
         <div class="field">
@@ -1767,6 +1775,13 @@ function getCashInfo(monthFilter){
 // hua cash hai (purani Excel wali historical entries) to wahi use hota hai;
 // warna sabse recent aisi entry se + Expenses&Cash tab ki transactions se
 // khud-ba-khud calculate ho jaata hai — dobara type karne ki zarurat nahi.
+// Udhaar entry ka cash par asar sirf tab jab paisa cash se gaya/aaya ho (mode=cash; purani entries = cash)
+function ledgerCash(r){ return (r.mode||'cash')==='cash'; }
+function suggestLedgerMode(){
+  if(document.getElementById('ledgerEditId').value) return;
+  const t=document.getElementById('ledgerType').value, d=document.getElementById('ledgerDirection').value;
+  document.getElementById('ledgerMode').value = (d==='add' && (t==='Levana'||t==='Devana')) ? 'credit' : 'cash';
+}
 function cashAsOf(cutoffMonth){
   const exact = state.stock.find(r=>r.month===cutoffMonth);
   if(exact && Number(exact.cash) > 0) return Number(exact.cash);
@@ -1786,20 +1801,20 @@ function cashAsOf(cutoffMonth){
   // isliye Add/Edit/Delete karte hi automatically Cash Balance update ho jaata hai.
   //
   // Levana (lena hai): udhaar diya (Badhao) = cash kam; wapas mila (Ghatao) = cash zyada.
-  const levanaGiven = state.ledger.filter(r => r.type==='Levana' && r.direction!=='subtract' && inScope(r.date))
+  const levanaGiven = state.ledger.filter(r => r.type==='Levana' && r.direction!=='subtract' && inScope(r.date) && ledgerCash(r))
     .reduce((a,r)=>a+Number(r.amount||0),0);
-  const levanaReturned = state.ledger.filter(r => r.type==='Levana' && r.direction==='subtract' && inScope(r.date))
+  const levanaReturned = state.ledger.filter(r => r.type==='Levana' && r.direction==='subtract' && inScope(r.date) && ledgerCash(r))
     .reduce((a,r)=>a+Number(r.amount||0),0);
 
   // Devana (dena hai): naya udhaar (Badhao) = maal aaya, abhi paisa gaya nahi, cash par asar nahi.
   // Payment kiya (Ghatao) = real paisa gaya, cash kam.
-  const devanaPaid = state.ledger.filter(r => r.type==='Devana' && r.direction==='subtract' && inScope(r.date))
+  const devanaPaid = state.ledger.filter(r => r.type==='Devana' && r.direction==='subtract' && inScope(r.date) && ledgerCash(r))
     .reduce((a,r)=>a+Number(r.amount||0),0);
 
   // Investment (loan liya): paisa mila (Badhao) = cash zyada; wapas kiya (Ghatao) = cash kam.
-  const investmentReceived = state.ledger.filter(r => r.type==='Investment' && r.direction!=='subtract' && inScope(r.date))
+  const investmentReceived = state.ledger.filter(r => r.type==='Investment' && r.direction!=='subtract' && inScope(r.date) && ledgerCash(r))
     .reduce((a,r)=>a+Number(r.amount||0),0);
-  const investmentReturned = state.ledger.filter(r => r.type==='Investment' && r.direction==='subtract' && inScope(r.date))
+  const investmentReturned = state.ledger.filter(r => r.type==='Investment' && r.direction==='subtract' && inScope(r.date) && ledgerCash(r))
     .reduce((a,r)=>a+Number(r.amount||0),0);
 
   return baseline + inflow - outflow - levanaGiven + levanaReturned - devanaPaid + investmentReceived - investmentReturned;
@@ -2740,7 +2755,7 @@ function renderLedgerTable(){
       <td>${r.type}</td>
       <td>${r.person}</td>
       <td class="num" style="color:${isSub?'var(--good)':'var(--critical)'};font-weight:700">${isSub?'-':'+'}${fmt(r.amount)}</td>
-      <td>${r.note || ''}</td>
+      <td><span class="panel-tag" style="font-size:10.5px;padding:2px 8px;">${({cash:'💵 Cash',bank:'🏦 Bank',credit:'📦 Udhaar'})[r.mode||'cash']}</span> ${r.note || ''}</td>
       <td>
         <button class="link-edit" onclick="editLedger('${r.id}')">Edit</button>
         <button class="danger" onclick="deleteLedger('${r.id}')">Delete</button>
@@ -2760,15 +2775,16 @@ function submitLedger(ev){
   const person = document.getElementById('ledgerPerson').value.trim();
   const amount = parseFloat(document.getElementById('ledgerAmount').value)||0;
   const note = document.getElementById('ledgerNote').value.trim();
+  const mode = document.getElementById('ledgerMode').value || 'cash';
   const editId = document.getElementById('ledgerEditId').value;
 
   if(!person || person === '__new__'){ toast('Pehle ek Person chunein ya naya add karein.'); return false; }
 
   if(editId){
     const r = state.ledger.find(r=>r.id===editId);
-    if(r){ r.type=type; r.direction=direction; r.date=date; r.person=person; r.amount=amount; r.note=note; }
+    if(r){ r.type=type; r.direction=direction; r.date=date; r.person=person; r.amount=amount; r.note=note; r.mode=mode; }
   } else {
-    state.ledger.push({ id: uid(), type, direction, date, person, amount, note });
+    state.ledger.push({ id: uid(), type, direction, date, person, amount, note, mode });
   }
   saveState();
   cancelLedgerEdit();
@@ -2787,11 +2803,13 @@ function editLedger(id){
   document.getElementById('ledgerPerson').value = r.person;
   document.getElementById('ledgerAmount').value = r.amount;
   document.getElementById('ledgerNote').value = r.note || '';
+  document.getElementById('ledgerMode').value = r.mode || 'cash';
   document.getElementById('ledgerFormTitle').textContent = 'Edit Entry';
   document.getElementById('ledgerCancelBtn').style.display = 'inline-block';
   window.scrollTo({top:0, behavior:'smooth'});
 }
 function cancelLedgerEdit(){
+  setTimeout(suggestLedgerMode, 0);
   document.getElementById('ledgerForm').reset();
   document.getElementById('ledgerEditId').value = '';
   document.getElementById('ledgerDate').value = new Date().toISOString().slice(0,10);
@@ -3004,7 +3022,7 @@ gu: {
   "Amazon · Flipkart · Meesho": "એમેઝોન · ફ્લિપકાર્ટ · મીશો",
   "Monthly sale, payment aur profit — data cloud me save hota hai, isliye ye file jis bhi PC me kholo hamesha latest hisab dikhega aur koi bhi entry dal sakta hai. Settings tab se backup zaroor le lena.": "માસિક વેચાણ, પેમેન્ટ અને નફો — ડેટા ક્લાઉડમાં સેવ થાય છે, એટલે આ ફાઇલ કોઈ પણ PC માં ખોલો હંમેશા લેટેસ્ટ હિસાબ દેખાશે અને કોઈ પણ એન્ટ્રી કરી શકે છે. Settings ટેબમાંથી બેકઅપ જરૂર લઈ લેજો.",
   "☁️ Live": "☁️ લાઇવ", "☁️ Saved": "☁️ સેવ થયું", "⏳ Saving...": "⏳ સેવ થાય છે...", "⚠️ Save failed — retry...": "⚠️ સેવ ન થયું — ફરી પ્રયત્ન...",
-  "🌓 Theme": "🌓 થીમ", "Naya Sale": "નવું વેચાણ", "Naya Kharch / Cash": "નવો ખર્ચ / રોકડ", "Udhaar Entry": "ઉધાર એન્ટ્રી", "Stock Update": "સ્ટોક અપડેટ", "Udhaar Khata": "ઉધાર ખાતું", "🎨 Theme": "🎨 થીમ", "Apni pasand ka look chuno — sirf is device ke liye save hota hai.": "તમારી પસંદનો લુક પસંદ કરો — ફક્ત આ ડિવાઇસ માટે સેવ થાય છે.", "Mode": "મોડ", "Color": "રંગ", "Done": "થઈ ગયું", "🌗 Auto": "🌗 ઓટો", "☀️ Light": "☀️ લાઇટ", "🌙 Dark": "🌙 ડાર્ક", "Indigo": "ઇન્ડિગો", "Ocean": "સમુદ્રી", "Emerald": "લીલો", "Sunset": "સૂર્યાસ્ત", "Rose": "ગુલાબી", "Royal": "રોયલ", "Gold": "સોનેરી",
+  "🌓 Theme": "🌓 થીમ", "Paisa kaise gaya/aaya": "પૈસા કેવી રીતે ગયા/આવ્યા", "💵 Cash se (Cash Balance badlega)": "💵 રોકડથી (રોકડ બેલેન્સ બદલાશે)", "🏦 Bank se (Cash par asar nahi)": "🏦 બેંકથી (રોકડ પર અસર નહીં)", "📦 Maal / Udhaar (paisa nahi gaya)": "📦 માલ / ઉધાર (પૈસા ગયા નથી)", "💵 Cash": "💵 રોકડ", "🏦 Bank": "🏦 બેંક", "📦 Udhaar": "📦 ઉધાર", "Naya Sale": "નવું વેચાણ", "Naya Kharch / Cash": "નવો ખર્ચ / રોકડ", "Udhaar Entry": "ઉધાર એન્ટ્રી", "Stock Update": "સ્ટોક અપડેટ", "Udhaar Khata": "ઉધાર ખાતું", "🎨 Theme": "🎨 થીમ", "Apni pasand ka look chuno — sirf is device ke liye save hota hai.": "તમારી પસંદનો લુક પસંદ કરો — ફક્ત આ ડિવાઇસ માટે સેવ થાય છે.", "Mode": "મોડ", "Color": "રંગ", "Done": "થઈ ગયું", "🌗 Auto": "🌗 ઓટો", "☀️ Light": "☀️ લાઇટ", "🌙 Dark": "🌙 ડાર્ક", "Indigo": "ઇન્ડિગો", "Ocean": "સમુદ્રી", "Emerald": "લીલો", "Sunset": "સૂર્યાસ્ત", "Rose": "ગુલાબી", "Royal": "રોયલ", "Gold": "સોનેરી",
   "📊 Dashboard": "📊 ડેશબોર્ડ", "🛒 Sale Entry": "🛒 વેચાણ એન્ટ્રી", "💸 Expenses & Cash": "💸 ખર્ચ અને રોકડ", "📦 Stock": "📦 સ્ટોક",
   "🏦 Bank Balance": "🏦 બેંક બેલેન્સ", "🤝 Udhaar Khata": "🤝 ઉધાર ખાતું", "⚙️ Settings": "⚙️ સેટિંગ્સ",
   "Dashboard": "ડેશબોર્ડ", "Sale": "વેચાણ", "Expense": "ખર્ચ", "Udhaar": "ઉધાર", "More": "વધુ", "Settings": "સેટિંગ્સ",
@@ -3088,7 +3106,7 @@ gu: {
 },
 en: {
   "Monthly sale, payment aur profit — data cloud me save hota hai, isliye ye file jis bhi PC me kholo hamesha latest hisab dikhega aur koi bhi entry dal sakta hai. Settings tab se backup zaroor le lena.": "Monthly sales, payments and profit — data is saved in the cloud, so this file shows the latest figures on any PC and anyone can add entries. Do take a backup from the Settings tab.",
-  "☁️ Saved": "☁️ Saved", "⏳ Saving...": "⏳ Saving...", "Naya Sale": "New Sale", "Naya Kharch / Cash": "New Expense / Cash", "Udhaar Entry": "Ledger Entry", "Udhaar Khata": "Credit Ledger", "Apni pasand ka look chuno — sirf is device ke liye save hota hai.": "Pick the look you like — saved only for this device.",
+  "☁️ Saved": "☁️ Saved", "⏳ Saving...": "⏳ Saving...", "Paisa kaise gaya/aaya": "Payment mode", "💵 Cash se (Cash Balance badlega)": "💵 Cash (changes Cash Balance)", "🏦 Bank se (Cash par asar nahi)": "🏦 Bank (no cash effect)", "📦 Maal / Udhaar (paisa nahi gaya)": "📦 Goods / Credit (no money moved)", "📦 Udhaar": "📦 Credit", "Naya Sale": "New Sale", "Naya Kharch / Cash": "New Expense / Cash", "Udhaar Entry": "Ledger Entry", "Udhaar Khata": "Credit Ledger", "Apni pasand ka look chuno — sirf is device ke liye save hota hai.": "Pick the look you like — saved only for this device.",
   "🤝 Udhaar Khata": "🤝 Credit Ledger", "Udhaar": "Ledger",
   "All Time": "All Time", "(ek month select karein)": "(select one month)",
   "Monthly Profit = (Bank Balance + Portal Balance + Stock + Cash + Levana − Investment − Devana + Upad) is month ka − pichle month ka. Isme Stock/Cash/Bank Balance us month ke liye zaroor bhare hone chahiye, warna \"—\" dikhega.": "Monthly Profit = (Bank Balance + Portal Balance + Stock + Cash + Receivables − Investment − Payables + Drawings) for this month − previous month. Stock/Cash/Bank Balance must be filled for that month, otherwise \"—\" is shown.",
