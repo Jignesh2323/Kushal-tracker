@@ -52,6 +52,10 @@
     --accent-dark:    #3d34c9;
     --accent-2:       #7c3aed;
     --accent-glow:    rgba(79,70,229,.28);
+    --hero-a:         #312e81;
+    --accent-edge:    rgba(37,32,135,.55);
+    --bg-glow-1:      rgba(124,58,237,.14);
+    --bg-glow-2:      rgba(79,70,229,.12);
     --radius:         20px;
     --radius-sm:      13px;
     --hi:             rgba(255,255,255,.85);           /* top inner highlight */
@@ -154,14 +158,60 @@
 
   html.lang-gu, html.lang-gu button, html.lang-gu input, html.lang-gu select, html.lang-gu label, html.lang-gu h1, html.lang-gu h2, html.lang-gu h3{font-family:'Noto Sans Gujarati', 'Shruti', 'Inter', system-ui, sans-serif;}
   html.lang-gu .mono, html.lang-gu .kpi .value, html.lang-gu td.num, html.lang-gu th.num{font-family:'IBM Plex Mono', ui-monospace, monospace;}
+
+  /* ---------- COLOR THEMES (Settings/Theme button → sheet) ---------- */
+  html[data-accent="ocean"]{   --accent:#0284c7; --accent-dark:#0369a1; --accent-2:#06b6d4; --accent-glow:rgba(2,132,199,.32);  --hero-a:#0c4a6e; --accent-edge:rgba(7,89,133,.6);   --bg-glow-1:rgba(6,182,212,.16);  --bg-glow-2:rgba(2,132,199,.12); }
+  html[data-accent="emerald"]{ --accent:#059669; --accent-dark:#047857; --accent-2:#14b8a6; --accent-glow:rgba(5,150,105,.32);  --hero-a:#064e3b; --accent-edge:rgba(6,95,70,.6);    --bg-glow-1:rgba(20,184,166,.16); --bg-glow-2:rgba(5,150,105,.12); }
+  html[data-accent="sunset"]{  --accent:#ea580c; --accent-dark:#c2410c; --accent-2:#f59e0b; --accent-glow:rgba(234,88,12,.32);  --hero-a:#7c2d12; --accent-edge:rgba(154,52,18,.6);  --bg-glow-1:rgba(245,158,11,.16); --bg-glow-2:rgba(234,88,12,.12); }
+  html[data-accent="rose"]{    --accent:#e11d48; --accent-dark:#be123c; --accent-2:#f472b6; --accent-glow:rgba(225,29,72,.32);  --hero-a:#881337; --accent-edge:rgba(159,18,57,.6);  --bg-glow-1:rgba(244,114,182,.16);--bg-glow-2:rgba(225,29,72,.12); }
+  html[data-accent="royal"]{   --accent:#7c3aed; --accent-dark:#6d28d9; --accent-2:#d946ef; --accent-glow:rgba(124,58,237,.34); --hero-a:#4c1d95; --accent-edge:rgba(76,29,149,.6);  --bg-glow-1:rgba(217,70,239,.16); --bg-glow-2:rgba(124,58,237,.12); }
+  html[data-accent="gold"]{    --accent:#b45309; --accent-dark:#92400e; --accent-2:#f59e0b; --accent-glow:rgba(180,83,9,.32);   --hero-a:#1c1917; --accent-edge:rgba(41,37,36,.7);   --bg-glow-1:rgba(245,158,11,.14); --bg-glow-2:rgba(120,113,108,.14); }
+  html[data-theme="dark"][data-accent="ocean"], html.dark-auto[data-accent="ocean"]{ --accent:#38bdf8; --accent-dark:#0ea5e9; --accent-2:#22d3ee; }
+  html[data-theme="dark"][data-accent="emerald"], html.dark-auto[data-accent="emerald"]{ --accent:#34d399; --accent-dark:#10b981; --accent-2:#2dd4bf; }
+  html[data-theme="dark"][data-accent="sunset"], html.dark-auto[data-accent="sunset"]{ --accent:#fb923c; --accent-dark:#f97316; --accent-2:#fbbf24; }
+  html[data-theme="dark"][data-accent="rose"], html.dark-auto[data-accent="rose"]{ --accent:#fb7185; --accent-dark:#f43f5e; --accent-2:#f9a8d4; }
+  html[data-theme="dark"][data-accent="royal"], html.dark-auto[data-accent="royal"]{ --accent:#a78bfa; --accent-dark:#8b5cf6; --accent-2:#e879f9; }
+  html[data-theme="dark"][data-accent="gold"], html.dark-auto[data-accent="gold"]{ --accent:#fbbf24; --accent-dark:#f59e0b; --accent-2:#fde68a; }
+
+  /* ---------- THEME SHEET ---------- */
+  .sheet-backdrop{position:fixed; inset:0; z-index:900; background:rgba(10,11,25,.5); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); display:none; align-items:flex-end; justify-content:center;}
+  .sheet-backdrop.open{display:flex;}
+  .sheet{
+    width:100%; max-width:520px; max-height:88vh; overflow:auto;
+    background:linear-gradient(180deg, var(--surface-1), var(--surface-2)); color:var(--text-primary);
+    border:1px solid var(--border); border-bottom:none; border-radius:24px 24px 0 0; padding:10px 18px calc(22px + env(safe-area-inset-bottom));
+    box-shadow:0 1px 0 var(--hi) inset, 0 -20px 60px -20px rgba(0,0,0,.5);
+    animation:sheetUp .28s cubic-bezier(.2,.9,.3,1.1) both;
+  }
+  @keyframes sheetUp{from{transform:translateY(40px); opacity:0;} to{transform:none; opacity:1;}}
+  .sheet-grip{width:44px; height:5px; border-radius:99px; background:var(--baseline); margin:4px auto 14px;}
+  .sheet h3{margin:0 0 4px; font-size:18px;}
+  .sheet .hint{color:var(--text-secondary); font-size:12.5px; margin:0 0 14px;}
+  .sheet .sec{font-family:'Inter',sans-serif; font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:14px 0 8px;}
+  .seg{display:flex; gap:4px; padding:4px; border-radius:14px; background:var(--paper-dark); box-shadow:0 2px 6px var(--lo) inset;}
+  .seg button{flex:1; min-height:40px; border:none; border-radius:11px; background:transparent; color:var(--text-secondary); font-size:13px; font-weight:600; box-shadow:none;}
+  .seg button.active{background:linear-gradient(180deg, var(--surface-1), var(--surface-2)); color:var(--text-primary); box-shadow:0 1px 0 var(--hi) inset, 0 4px 10px -4px rgba(20,22,43,.3);}
+  .swatches{display:grid; grid-template-columns:repeat(4,1fr); gap:12px;}
+  .swatch{display:flex; flex-direction:column; align-items:center; gap:6px; background:none; border:none; box-shadow:none; padding:4px 0; min-height:0; color:var(--text-secondary); font-size:11.5px; font-weight:600;}
+  .swatch .ball{
+    width:46px; height:46px; border-radius:50%; position:relative;
+    background:linear-gradient(135deg, var(--sa) 0%, var(--sb) 55%, var(--sc) 100%);
+    box-shadow:0 1px 0 rgba(255,255,255,.5) inset, 0 -3px 0 rgba(0,0,0,.18) inset, 0 8px 16px -6px rgba(0,0,0,.45);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .swatch .ball::after{content:""; position:absolute; left:12px; top:8px; width:14px; height:8px; border-radius:50%; background:rgba(255,255,255,.55); filter:blur(1px);}
+  .swatch.active .ball{transform:scale(1.12); box-shadow:0 0 0 3px var(--surface-1), 0 0 0 5px var(--accent), 0 10px 20px -6px rgba(0,0,0,.45);}
+  .swatch.active{color:var(--accent);}
+  .sheet .close-btn{width:100%; margin-top:18px;}
+
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   html{-webkit-text-size-adjust:100%;}
   body{
     font-family: 'Inter', 'Noto Sans Gujarati', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     background:
-      radial-gradient(900px 500px at 110% -10%, rgba(124,58,237,.14), transparent 60%),
-      radial-gradient(700px 420px at -10% 20%, rgba(79,70,229,.12), transparent 60%),
+      radial-gradient(900px 500px at 110% -10%, var(--bg-glow-1), transparent 60%),
+      radial-gradient(700px 420px at -10% 20%, var(--bg-glow-2), transparent 60%),
       var(--paper);
     background-attachment: fixed;
     color: var(--text-primary);
@@ -176,7 +226,7 @@
   /* ---------- HERO (3D glass banner) ---------- */
   .hero-banner{
     position:relative; overflow:hidden; isolation:isolate;
-    background:linear-gradient(135deg, #312e81 0%, var(--accent) 48%, var(--accent-2) 100%);
+    background:linear-gradient(135deg, var(--hero-a) 0%, var(--accent) 48%, var(--accent-2) 100%);
     display:flex; align-items:flex-start; justify-content:space-between; gap:14px; flex-wrap:wrap;
     padding:28px 26px 32px; margin:0 0 22px;
     border-radius:0 0 30px 30px;
@@ -302,11 +352,11 @@
   button.primary{
     color:#fff;font-weight:700;padding:11px 22px;border:1px solid transparent;
     background:linear-gradient(180deg, var(--accent), var(--accent-dark));
-    box-shadow:0 1px 0 rgba(255,255,255,.35) inset, 0 -2px 0 rgba(0,0,0,.2) inset, 0 4px 0 rgba(37,32,135,.55), 0 10px 20px -8px var(--accent-glow);
+    box-shadow:0 1px 0 rgba(255,255,255,.35) inset, 0 -2px 0 rgba(0,0,0,.2) inset, 0 4px 0 var(--accent-edge), 0 10px 20px -8px var(--accent-glow);
     text-shadow:0 1px 1px rgba(0,0,0,.2);
   }
   button.primary:hover{filter:brightness(1.06);}
-  button.primary:active{transform:translateY(3px); box-shadow:0 1px 0 rgba(255,255,255,.3) inset, 0 1px 0 rgba(37,32,135,.55);}
+  button.primary:active{transform:translateY(3px); box-shadow:0 1px 0 rgba(255,255,255,.3) inset, 0 1px 0 var(--accent-edge);}
   button.secondary, label.secondary{
     background:linear-gradient(180deg, var(--surface-1), var(--surface-2));border:1px solid var(--border);color:var(--text-primary);padding:10px 16px;font-size:13.5px;
     box-shadow:0 1px 0 var(--hi) inset, 0 3px 0 var(--btn-edge), 0 8px 16px -8px rgba(20,22,43,.25);
@@ -476,7 +526,7 @@
     background:
       radial-gradient(circle at 85% 10%, rgba(255,255,255,.35), transparent 45%),
       radial-gradient(circle at 10% 95%, rgba(255,255,255,.18), transparent 45%),
-      linear-gradient(135deg, #312e81 0%, var(--accent) 48%, var(--accent-2) 100%);
+      linear-gradient(135deg, var(--hero-a) 0%, var(--accent) 48%, var(--accent-2) 100%);
     padding:24px;
   }
   .lock-screen h2{color:#fff; font-size:22px; margin:0; text-shadow:0 2px 0 rgba(0,0,0,.12), 0 8px 24px rgba(0,0,0,.25);}
@@ -512,7 +562,7 @@
     </div>
     <div style="display:flex; gap:10px; align-items:center; position:relative; z-index:1;">
       <span id="syncBadge" class="sync-badge">☁️ Loading...</span>
-      <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🌓 Theme</button>
+      <button class="theme-btn" id="themeBtn" onclick="openThemeSheet()">🌓 Theme</button>
     </div>
   </div>
 
@@ -936,6 +986,30 @@
 
 </div>
 
+<div class="sheet-backdrop" id="themeSheet" onclick="if(event.target===this) closeThemeSheet()">
+  <div class="sheet">
+    <div class="sheet-grip"></div>
+    <h3>🎨 Theme</h3>
+    <p class="hint">Apni pasand ka look chuno — sirf is device ke liye save hota hai.</p>
+    <div class="sec">Mode</div>
+    <div class="seg" id="modeSeg">
+      <button type="button" data-mode="auto" onclick="setMode('auto')">🌗 Auto</button>
+      <button type="button" data-mode="light" onclick="setMode('light')">☀️ Light</button>
+      <button type="button" data-mode="dark" onclick="setMode('dark')">🌙 Dark</button>
+    </div>
+    <div class="sec">Color</div>
+    <div class="swatches" id="accentSwatches">
+      <button type="button" class="swatch" data-accent="indigo" onclick="setAccent('indigo')"><span class="ball" style="--sa:#312e81;--sb:#4f46e5;--sc:#7c3aed"></span>Indigo</button>
+      <button type="button" class="swatch" data-accent="ocean" onclick="setAccent('ocean')"><span class="ball" style="--sa:#0c4a6e;--sb:#0284c7;--sc:#06b6d4"></span>Ocean</button>
+      <button type="button" class="swatch" data-accent="emerald" onclick="setAccent('emerald')"><span class="ball" style="--sa:#064e3b;--sb:#059669;--sc:#14b8a6"></span>Emerald</button>
+      <button type="button" class="swatch" data-accent="sunset" onclick="setAccent('sunset')"><span class="ball" style="--sa:#7c2d12;--sb:#ea580c;--sc:#f59e0b"></span>Sunset</button>
+      <button type="button" class="swatch" data-accent="rose" onclick="setAccent('rose')"><span class="ball" style="--sa:#881337;--sb:#e11d48;--sc:#f472b6"></span>Rose</button>
+      <button type="button" class="swatch" data-accent="royal" onclick="setAccent('royal')"><span class="ball" style="--sa:#4c1d95;--sb:#7c3aed;--sc:#d946ef"></span>Royal</button>
+      <button type="button" class="swatch" data-accent="gold" onclick="setAccent('gold')"><span class="ball" style="--sa:#1c1917;--sb:#b45309;--sc:#f59e0b"></span>Gold</button>
+    </div>
+    <button type="button" class="primary close-btn" onclick="closeThemeSheet()">Done</button>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <nav class="bottom-nav" id="bottomNav">
@@ -2834,7 +2908,7 @@ gu: {
   "Amazon · Flipkart · Meesho": "એમેઝોન · ફ્લિપકાર્ટ · મીશો",
   "Monthly sale, payment aur profit — data cloud me save hota hai, isliye ye file jis bhi PC me kholo hamesha latest hisab dikhega aur koi bhi entry dal sakta hai. Settings tab se backup zaroor le lena.": "માસિક વેચાણ, પેમેન્ટ અને નફો — ડેટા ક્લાઉડમાં સેવ થાય છે, એટલે આ ફાઇલ કોઈ પણ PC માં ખોલો હંમેશા લેટેસ્ટ હિસાબ દેખાશે અને કોઈ પણ એન્ટ્રી કરી શકે છે. Settings ટેબમાંથી બેકઅપ જરૂર લઈ લેજો.",
   "☁️ Live": "☁️ લાઇવ", "☁️ Saved": "☁️ સેવ થયું", "⏳ Saving...": "⏳ સેવ થાય છે...", "⚠️ Save failed — retry...": "⚠️ સેવ ન થયું — ફરી પ્રયત્ન...",
-  "🌓 Theme": "🌓 થીમ",
+  "🌓 Theme": "🌓 થીમ", "🎨 Theme": "🎨 થીમ", "Apni pasand ka look chuno — sirf is device ke liye save hota hai.": "તમારી પસંદનો લુક પસંદ કરો — ફક્ત આ ડિવાઇસ માટે સેવ થાય છે.", "Mode": "મોડ", "Color": "રંગ", "Done": "થઈ ગયું", "🌗 Auto": "🌗 ઓટો", "☀️ Light": "☀️ લાઇટ", "🌙 Dark": "🌙 ડાર્ક", "Indigo": "ઇન્ડિગો", "Ocean": "સમુદ્રી", "Emerald": "લીલો", "Sunset": "સૂર્યાસ્ત", "Rose": "ગુલાબી", "Royal": "રોયલ", "Gold": "સોનેરી",
   "📊 Dashboard": "📊 ડેશબોર્ડ", "🛒 Sale Entry": "🛒 વેચાણ એન્ટ્રી", "💸 Expenses & Cash": "💸 ખર્ચ અને રોકડ", "📦 Stock": "📦 સ્ટોક",
   "🏦 Bank Balance": "🏦 બેંક બેલેન્સ", "🤝 Udhaar Khata": "🤝 ઉધાર ખાતું", "⚙️ Settings": "⚙️ સેટિંગ્સ",
   "Dashboard": "ડેશબોર્ડ", "Sale": "વેચાણ", "Expense": "ખર્ચ", "Udhaar": "ઉધાર", "More": "વધુ", "Settings": "સેટિંગ્સ",
@@ -2918,7 +2992,7 @@ gu: {
 },
 en: {
   "Monthly sale, payment aur profit — data cloud me save hota hai, isliye ye file jis bhi PC me kholo hamesha latest hisab dikhega aur koi bhi entry dal sakta hai. Settings tab se backup zaroor le lena.": "Monthly sales, payments and profit — data is saved in the cloud, so this file shows the latest figures on any PC and anyone can add entries. Do take a backup from the Settings tab.",
-  "☁️ Saved": "☁️ Saved", "⏳ Saving...": "⏳ Saving...",
+  "☁️ Saved": "☁️ Saved", "⏳ Saving...": "⏳ Saving...", "Apni pasand ka look chuno — sirf is device ke liye save hota hai.": "Pick the look you like — saved only for this device.",
   "🤝 Udhaar Khata": "🤝 Credit Ledger", "Udhaar": "Ledger",
   "All Time": "All Time", "(ek month select karein)": "(select one month)",
   "Monthly Profit = (Bank Balance + Portal Balance + Stock + Cash + Levana − Investment − Devana + Upad) is month ka − pichle month ka. Isme Stock/Cash/Bank Balance us month ke liye zaroor bhare hone chahiye, warna \"—\" dikhega.": "Monthly Profit = (Bank Balance + Portal Balance + Stock + Cash + Receivables − Investment − Payables + Drawings) for this month − previous month. Stock/Cash/Bank Balance must be filled for that month, otherwise \"—\" is shown.",
@@ -3030,6 +3104,35 @@ const _i18nMO = new MutationObserver(muts => {
 });
 _i18nMO.observe(document.body, { childList:true, subtree:true, characterData:true });
 applyLang();
+
+
+/* ---------- THEME SHEET (mode + color) ---------- */
+const ACCENT_META = { indigo:'#4f46e5', ocean:'#0284c7', emerald:'#059669', sunset:'#ea580c', rose:'#e11d48', royal:'#7c3aed', gold:'#b45309' };
+function getAccent(){ const a = _lsSafe(()=>localStorage.getItem('accent')); return ACCENT_META[a] ? a : 'indigo'; }
+function applyAccent(){
+  const a = getAccent(), root = document.documentElement;
+  if(a==='indigo') root.removeAttribute('data-accent'); else root.setAttribute('data-accent', a);
+  const meta = document.querySelector('meta[name="theme-color"]'); if(meta) meta.setAttribute('content', ACCENT_META[a]);
+  document.querySelectorAll('#accentSwatches .swatch').forEach(b=>b.classList.toggle('active', b.dataset.accent===a));
+}
+function setAccent(a){ _lsSafe(()=>localStorage.setItem('accent', a)); applyAccent(); }
+function currentMode(){ return document.documentElement.getAttribute('data-theme') || 'auto'; }
+function syncDarkAuto(){
+  const root = document.documentElement;
+  const dark = currentMode()==='dark' || (currentMode()==='auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  root.classList.toggle('dark-auto', currentMode()==='auto' && dark);
+  document.querySelectorAll('#modeSeg button').forEach(b=>b.classList.toggle('active', b.dataset.mode===currentMode()));
+}
+function setMode(m){
+  const root = document.documentElement;
+  if(m==='auto'){ root.removeAttribute('data-theme'); _lsSafe(()=>localStorage.removeItem('theme')); }
+  else { root.setAttribute('data-theme', m); _lsSafe(()=>localStorage.setItem('theme', m)); }
+  syncDarkAuto(); renderDashboard();
+}
+function openThemeSheet(){ syncDarkAuto(); applyAccent(); document.getElementById('themeSheet').classList.add('open'); }
+function closeThemeSheet(){ document.getElementById('themeSheet').classList.remove('open'); }
+if(window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncDarkAuto);
+applyAccent(); syncDarkAuto();
 
 /* ---------- INIT ---------- */
 // Pehle embedded/local data se turant render (blank screen na dikhe),
