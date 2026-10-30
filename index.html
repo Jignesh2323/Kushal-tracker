@@ -15,8 +15,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- Fonts non-blocking: page turant render hota hai, fonts aane par swap -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap"></noscript>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;600;700&family=IBM+Plex+Mono:wght@500;700&family=Noto+Sans+Gujarati:wght@400;600;700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;600;700&family=IBM+Plex+Mono:wght@500;700&family=Noto+Sans+Gujarati:wght@400;600;700&display=swap"></noscript>
 <style>
   :root{
     color-scheme: light;
@@ -152,11 +152,13 @@
     --glass:          rgba(25,27,45,.72);
   }
 
+  html.lang-gu, html.lang-gu button, html.lang-gu input, html.lang-gu select, html.lang-gu label, html.lang-gu h1, html.lang-gu h2, html.lang-gu h3{font-family:'Noto Sans Gujarati', 'Shruti', 'Inter', system-ui, sans-serif;}
+  html.lang-gu .mono, html.lang-gu .kpi .value, html.lang-gu td.num, html.lang-gu th.num{font-family:'IBM Plex Mono', ui-monospace, monospace;}
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   html{-webkit-text-size-adjust:100%;}
   body{
-    font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-family: 'Inter', 'Noto Sans Gujarati', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     background:
       radial-gradient(900px 500px at 110% -10%, rgba(124,58,237,.14), transparent 60%),
       radial-gradient(700px 420px at -10% 20%, rgba(79,70,229,.12), transparent 60%),
@@ -854,6 +856,21 @@
 
   <!-- SETTINGS -->
   <section id="tab-settings" class="tabpanel">
+    <div class="card">
+      <h2>🌐 Language / ભાષા</h2>
+      <p class="settings-note">App ki bhasha chuno — sirf is device ke liye save hoti hai.</p>
+      <div class="row-controls" style="margin-bottom:0;">
+        <div class="field">
+          <label for="langSelect">Language</label>
+          <select id="langSelect" onchange="setLang(this.value)">
+            <option value="hi">Hinglish (default)</option>
+            <option value="gu">ગુજરાતી (Gujarati)</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
     <div class="card">
       <h2>Panels</h2>
       <div id="panelList"></div>
@@ -2805,6 +2822,214 @@ function clearAllData(){
     }
   });
 }
+
+
+/* ---------- LANGUAGE / ભાષા (Settings → Language) ----------
+   Default UI Hinglish hai. 'gu' = ગુજરાતી, 'en' = English.
+   Dictionary key = original Hinglish text (whitespace-collapsed). Page ke text nodes
+   ko MutationObserver har render ke baad translate karta hai, isliye baki code ko
+   chhedna nahi pada. Language per-device save hoti hai (localStorage 'lang'). */
+const I18N = {
+gu: {
+  "Amazon · Flipkart · Meesho": "એમેઝોન · ફ્લિપકાર્ટ · મીશો",
+  "Monthly sale, payment aur profit — data cloud me save hota hai, isliye ye file jis bhi PC me kholo hamesha latest hisab dikhega aur koi bhi entry dal sakta hai. Settings tab se backup zaroor le lena.": "માસિક વેચાણ, પેમેન્ટ અને નફો — ડેટા ક્લાઉડમાં સેવ થાય છે, એટલે આ ફાઇલ કોઈ પણ PC માં ખોલો હંમેશા લેટેસ્ટ હિસાબ દેખાશે અને કોઈ પણ એન્ટ્રી કરી શકે છે. Settings ટેબમાંથી બેકઅપ જરૂર લઈ લેજો.",
+  "☁️ Live": "☁️ લાઇવ", "☁️ Saved": "☁️ સેવ થયું", "⏳ Saving...": "⏳ સેવ થાય છે...", "⚠️ Save failed — retry...": "⚠️ સેવ ન થયું — ફરી પ્રયત્ન...",
+  "🌓 Theme": "🌓 થીમ",
+  "📊 Dashboard": "📊 ડેશબોર્ડ", "🛒 Sale Entry": "🛒 વેચાણ એન્ટ્રી", "💸 Expenses & Cash": "💸 ખર્ચ અને રોકડ", "📦 Stock": "📦 સ્ટોક",
+  "🏦 Bank Balance": "🏦 બેંક બેલેન્સ", "🤝 Udhaar Khata": "🤝 ઉધાર ખાતું", "⚙️ Settings": "⚙️ સેટિંગ્સ",
+  "Dashboard": "ડેશબોર્ડ", "Sale": "વેચાણ", "Expense": "ખર્ચ", "Udhaar": "ઉધાર", "More": "વધુ", "Settings": "સેટિંગ્સ",
+  "Month": "મહિનો", "All Time": "બધો સમય", "Portal Balance": "પોર્ટલ બેલેન્સ", "Total Expenses": "કુલ ખર્ચ", "Monthly Profit": "માસિક નફો",
+  "Cash Balance (Live)": "રોકડ બેલેન્સ (લાઇવ)", "(ek month select karein)": "(એક મહિનો પસંદ કરો)",
+  "Monthly Profit = (Bank Balance + Portal Balance + Stock + Cash + Levana − Investment − Devana + Upad) is month ka − pichle month ka. Isme Stock/Cash/Bank Balance us month ke liye zaroor bhare hone chahiye, warna \"—\" dikhega.": "માસિક નફો = (બેંક બેલેન્સ + પોર્ટલ બેલેન્સ + સ્ટોક + રોકડ + લેવાના − રોકાણ − દેવાના + ઉપાડ) આ મહિનાનું − ગયા મહિનાનું. એમાં સ્ટોક/રોકડ/બેંક બેલેન્સ એ મહિના માટે જરૂર ભરેલા હોવા જોઈએ, નહીં તો \"—\" દેખાશે.",
+  "Business Position": "બિઝનેસની સ્થિતિ", "Total (as of month)": "કુલ (મહિના સુધી)",
+  "Total Investment Received": "કુલ રોકાણ મળ્યું", "Total Levana (lena hai)": "કુલ લેવાના (લેવાના છે)", "Total Devana (dena hai)": "કુલ દેવાના (આપવાના છે)",
+  "Total Upad (personal draw)": "કુલ ઉપાડ (અંગત ઉપાડ)", "(yehi profit me count hoti hai)": "(આ જ નફામાં ગણાય છે)",
+  "🧮 Monthly Profit ka Pura Hisab": "🧮 માસિક નફાનો પૂરો હિસાબ",
+  "Platform-wise Sale Share": "પ્લેટફોર્મ પ્રમાણે વેચાણ હિસ્સો", "% of total selling": "કુલ વેચાણના %",
+  "Is period ke liye koi sale data nahi hai.": "આ સમયગાળા માટે કોઈ વેચાણ ડેટા નથી.",
+  "Last 6 Months Sale Trend": "છેલ્લા 6 મહિનાનો વેચાણ ટ્રેન્ડ", "Platform-wise Sale & Portal Balance": "પ્લેટફોર્મ પ્રમાણે વેચાણ અને પોર્ટલ બેલેન્સ",
+  "Platform": "પ્લેટફોર્મ", "Selling": "વેચાણ", "% Share": "% હિસ્સો", "Total": "કુલ",
+  "Panel-wise Breakdown": "પેનલ પ્રમાણે વિગત", "Panel": "પેનલ", "Bank Balance": "બેંક બેલેન્સ", "Expenses (tagged)": "ખર્ચ (ટેગ કરેલા)",
+  "Month-wise Summary": "મહિના પ્રમાણે સારાંશ", "sabhi months ek nazar me": "બધા મહિના એક નજરે", "Total Sale": "કુલ વેચાણ", "Expenses": "ખર્ચ", "Stock": "સ્ટોક",
+  "Add / Update Monthly Sale": "માસિક વેચાણ ઉમેરો / અપડેટ કરો", "Selling Amount (₹)": "વેચાણ રકમ (₹)", "Portal Balance (₹)": "પોર્ટલ બેલેન્સ (₹)",
+  "Orders": "ઓર્ડર", "(optional)": "(વૈકલ્પિક)", "Note": "નોંધ", "Save": "સેવ કરો", "Cancel": "રદ કરો",
+  "Note: Ek Month + Panel + Platform ke liye ek hi entry rehti hai — dobara save karoge to existing entry update ho jayegi.": "નોંધ: એક મહિનો + પેનલ + પ્લેટફોર્મ માટે એક જ એન્ટ્રી રહે છે — ફરી સેવ કરશો તો હાલની એન્ટ્રી અપડેટ થઈ જશે.",
+  "All Sale Entries": "બધી વેચાણ એન્ટ્રી", "All Panels": "બધી પેનલ", "Actions": "ક્રિયા", "Edit": "સુધારો", "Delete": "કાઢી નાખો",
+  "Current Cash Balance": "હાલનું રોકડ બેલેન્સ", "live, isi tab ki Cash entries se": "લાઇવ, આ જ ટેબની રોકડ એન્ટ્રીમાંથી",
+  "Add Expense / Cash Entry": "ખર્ચ / રોકડ એન્ટ્રી ઉમેરો", "Direction": "પ્રકાર", "💸 Kharch Hua (Expense)": "💸 ખર્ચ થયો (Expense)", "💰 Cash Aaya (Cash In)": "💰 રોકડ આવી (Cash In)",
+  "Date": "તારીખ", "Category": "કેટેગરી", "Office Expense": "ઓફિસ ખર્ચ", "Product Purchase": "માલ ખરીદી", "Rent": "ભાડું", "Fixed Asset": "સ્થિર મિલકત",
+  "Upad / Personal": "ઉપાડ / અંગત", "Other": "અન્ય", "Source": "સ્ત્રોત", "Cash": "રોકડ", "Bank": "બેંક", "General (no panel)": "સામાન્ય (પેનલ વગર)",
+  "Amount (₹)": "રકમ (₹)", "Detail": "વિગત", "Amount": "રકમ", "Entries": "એન્ટ્રી",
+  "\"Cash Aaya\" wale entries (Bank Withdrawal, Product Sell, etc.) — Dashboard ka Cash Balance turant update ho jaata hai. \"Kharch Hua\" wale entries Total Expenses me count hote hain, aur agar Source=\"Cash\" ho to Cash Balance se bhi ghat jaate hain.": "\"રોકડ આવી\" વાળી એન્ટ્રી (બેંક ઉપાડ, માલ વેચાણ વગેરે) — ડેશબોર્ડનું રોકડ બેલેન્સ તરત અપડેટ થાય છે. \"ખર્ચ થયો\" વાળી એન્ટ્રી કુલ ખર્ચમાં ગણાય છે, અને જો સ્ત્રોત=\"રોકડ\" હોય તો રોકડ બેલેન્સમાંથી પણ ઘટે છે.",
+  "All Entries": "બધી એન્ટ્રી", "All Categories": "બધી કેટેગરી", "Withdrawal from Bank": "બેંકમાંથી ઉપાડ", "Product Sell (Cash)": "માલ વેચાણ (રોકડ)", "Other Cash In": "અન્ય રોકડ આવક",
+  "Total Expenses (Cash + Bank)": "કુલ ખર્ચ (રોકડ + બેંક)", "Total Cash Aaya (In)": "કુલ રોકડ આવી", "Cash Expenses": "રોકડ ખર્ચ", "Bank Expenses": "બેંક ખર્ચ",
+  "Ye Total Cash+Bank dono expenses jodta hai. Monthly Profit calculation me sirf": "આ કુલ રોકડ+બેંક બંને ખર્ચ જોડે છે. માસિક નફાની ગણતરીમાં ફક્ત", "Cash-source": "રોકડ-સ્ત્રોત",
+  "expenses hi Cash Balance ghatate hain — Bank expenses Profit formula ko directly affect nahi karte (Bank Balance alag se, Bank Balance tab me track hoti hai).": "ખર્ચ જ રોકડ બેલેન્સ ઘટાડે છે — બેંક ખર્ચ નફાના ફોર્મ્યુલાને સીધી અસર નથી કરતા (બેંક બેલેન્સ અલગથી, બેંક બેલેન્સ ટેબમાં ટ્રેક થાય છે).",
+  "Add / Update Monthly Stock & Cash": "માસિક સ્ટોક અને રોકડ ઉમેરો / અપડેટ કરો", "Stock Value (₹)": "સ્ટોક કિંમત (₹)", "Cash in Hand": "હાથમાં રોકડ", "(auto, Expenses & Cash tab se)": "(ઓટો, ખર્ચ અને રોકડ ટેબમાંથી)",
+  "Har month me ek hi Stock/Cash value rehti hai — dobara save karoge to us month ki entry update ho jayegi. Cash in Hand ab manually type nahi karna — ye Expenses & Cash tab ki transactions se khud calculate hoti hai. Ye Monthly Profit calculation me bhi use hoti hai.": "દરેક મહિનામાં એક જ સ્ટોક/રોકડ કિંમત રહે છે — ફરી સેવ કરશો તો એ મહિનાની એન્ટ્રી અપડેટ થશે. હાથમાં રોકડ હવે જાતે લખવાની નથી — એ ખર્ચ અને રોકડ ટેબના વ્યવહારોથી આપમેળે ગણાય છે. એ માસિક નફાની ગણતરીમાં પણ વપરાય છે.",
+  "All Stock Entries": "બધી સ્ટોક એન્ટ્રી", "Stock Value": "સ્ટોક કિંમત",
+  "Add / Update Monthly Bank Balance": "માસિક બેંક બેલેન્સ ઉમેરો / અપડેટ કરો", "Bank Balance (₹)": "બેંક બેલેન્સ (₹)",
+  "Har month + panel ke liye ek hi Bank Balance rehti hai — dobara save karoge to us entry update ho jayegi.": "દરેક મહિનો + પેનલ માટે એક જ બેંક બેલેન્સ રહે છે — ફરી સેવ કરશો તો એ એન્ટ્રી અપડેટ થશે.",
+  "All Bank Balance Entries": "બધી બેંક બેલેન્સ એન્ટ્રી", "Add Entry": "એન્ટ્રી ઉમેરો", "Type": "પ્રકાર",
+  "Investment (loan liya)": "રોકાણ (લોન લીધી)", "Levana (lena hai)": "લેવાના (લેવાના છે)", "Devana (dena hai)": "દેવાના (આપવાના છે)", "Entry": "એન્ટ્રી",
+  "➕ Badhao": "➕ વધારો", "➖ Ghatao (payment/settle)": "➖ ઘટાડો (ચુકવણી/સેટલ)", "Person": "વ્યક્તિ", "-- Person chuno --": "-- વ્યક્તિ પસંદ કરો --", "+ Naya Person": "+ નવી વ્યક્તિ",
+  "Investment = jo paisa aapne kisi se liya business me lagane ke liye. Levana = jo paisa aapko doosron se lena hai. Devana = jo paisa aapko doosron ko dena hai. \"Badhao\" se balance badhta hai (naya udhaar/purchase), \"Ghatao\" se ghatta hai (payment kiya) — total hamesha current/live balance dikhata hai. Upad ab Expenses & Cash tab me hai.": "રોકાણ = જે પૈસા તમે કોઈ પાસેથી ધંધામાં લગાડવા લીધા. લેવાના = જે પૈસા તમારે બીજા પાસેથી લેવાના છે. દેવાના = જે પૈસા તમારે બીજાને આપવાના છે. \"વધારો\" થી બેલેન્સ વધે છે (નવી ઉધાર/ખરીદી), \"ઘટાડો\" થી ઘટે છે (ચુકવણી કરી) — કુલ હંમેશા હાલનું/લાઇવ બેલેન્સ બતાવે છે. ઉપાડ હવે ખર્ચ અને રોકડ ટેબમાં છે.",
+  "Teeno Cash Balance se automatically linked hain:": "ત્રણેય રોકડ બેલેન્સ સાથે આપમેળે જોડાયેલા છે:",
+  "Levana Badhao (udhaar diya) = Cash kam, Ghatao (wapas mila) = Cash zyada. Devana Badhao (naya udhaar liya, abhi payment nahi) = Cash par asar nahi, Ghatao (payment kiya) = Cash kam. Investment Badhao (paisa mila) = Cash zyada, Ghatao (wapas kiya) = Cash kam. Entry delete karne se uska ulta apne aap ho jaata hai.": "લેવાના વધારો (ઉધાર આપી) = રોકડ ઓછી, ઘટાડો (પાછા મળ્યા) = રોકડ વધુ. દેવાના વધારો (નવી ઉધાર લીધી, હજુ ચુકવણી નહીં) = રોકડ પર અસર નહીં, ઘટાડો (ચુકવણી કરી) = રોકડ ઓછી. રોકાણ વધારો (પૈસા મળ્યા) = રોકડ વધુ, ઘટાડો (પાછા આપ્યા) = રોકડ ઓછી. એન્ટ્રી કાઢી નાખવાથી એનું ઊલટું આપમેળે થઈ જાય છે.",
+  "Person-wise Balance": "વ્યક્તિ પ્રમાણે બેલેન્સ", "kisko kitna dena/lena baki hai": "કોને કેટલું આપવાનું/લેવાનું બાકી છે", "Balance": "બેલેન્સ", "Kise/Kiska": "કોને/કોનું",
+  "Devana": "દેવાના", "Hume dena hai": "અમારે આપવાના છે", "Levana": "લેવાના", "Humein lena hai": "અમારે લેવાના છે", "All Types": "બધા પ્રકાર", "Investment": "રોકાણ",
+  "Panels": "પેનલ", "Rename": "નામ બદલો", "New Panel Name": "નવી પેનલનું નામ", "Add Panel": "પેનલ ઉમેરો",
+  "Opening Balance": "ઓપનિંગ બેલેન્સ",
+  "Ye ek fixed baseline number hai — is Month ke Net Worth (Bank+Portal+Stock+Cash+Levana−Investment+Upad) ka total, jo purani (Excel wali) accounting se liya gaya hai. Agle month ka Monthly Profit calculate karne ke liye is baseline se shuru hota hai. Ek baar set karne ke baad usse pichle mahino ka data granular daalne ki zarurat nahi.": "આ એક નિશ્ચિત બેઝલાઇન આંકડો છે — આ મહિનાની નેટ વર્થ (બેંક+પોર્ટલ+સ્ટોક+રોકડ+લેવાના−રોકાણ+ઉપાડ) નો કુલ, જે જૂના (Excel વાળા) હિસાબમાંથી લીધો છે. આવતા મહિનાનો માસિક નફો આ બેઝલાઇનથી શરૂ થાય છે. એક વાર સેટ કર્યા પછી એની પહેલાના મહિનાનો ડેટા વિગતે નાખવાની જરૂર નથી.",
+  "As of Month": "મહિના સુધી", "Net Worth Value (₹)": "નેટ વર્થ કિંમત (₹)", "Clear": "સાફ કરો", "Abhi koi Opening Balance set nahi hai.": "હજુ કોઈ ઓપનિંગ બેલેન્સ સેટ નથી.",
+  "🔒 App Lock (PIN)": "🔒 એપ લોક (PIN)",
+  "PIN set karne ke baad app kholne par PIN maanga jayega — har jagah (PC, mobile, sab). Ye ek simple family-lock hai taaki koi aur aapka hisab na khole; PIN yaad rakhna zaroori hai.": "PIN સેટ કર્યા પછી એપ ખોલતી વખતે PIN માંગશે — બધે (PC, મોબાઇલ, બધું). આ એક સાદું ફેમિલી-લોક છે જેથી બીજું કોઈ તમારો હિસાબ ન ખોલે; PIN યાદ રાખવો જરૂરી છે.",
+  "Backup & Restore": "બેકઅપ અને રિસ્ટોર",
+  "Data aapke apne Supabase cloud me save hota hai — file ek baar bhejne ke baad dobara bhejne ki zarurat nahi, sab PCs par hamesha latest data khud aa jata hai. Phir bhi time-time par Export karke JSON backup safe rakhna acha rehta hai (Export dabane par data ek box me khulega, wahan se copy karke Notepad me paste-save kar lena).": "ડેટા તમારા પોતાના Supabase ક્લાઉડમાં સેવ થાય છે — ફાઇલ એક વાર મોકલ્યા પછી ફરી મોકલવાની જરૂર નથી, બધા PC પર હંમેશા લેટેસ્ટ ડેટા આપમેળે આવે છે. તોય સમયે-સમયે Export કરીને JSON બેકઅપ સાચવવો સારું (Export દબાવતા ડેટા એક બોક્સમાં ખુલશે, ત્યાંથી કોપી કરીને Notepad માં પેસ્ટ-સેવ કરી લેજો).",
+  "⬇ Export Backup (JSON)": "⬇ બેકઅપ એક્સપોર્ટ (JSON)", "⬆ Import Backup": "⬆ બેકઅપ ઇમ્પોર્ટ",
+  "🗑️ Delete History": "🗑️ ડિલીટ હિસ્ટરી", "galti se delete hui entries yaha milengi": "ભૂલથી કાઢેલી એન્ટ્રી અહીં મળશે",
+  "Jab bhi koi entry delete hoti hai (Sale, Expense, Stock, Bank, Udhaar, Panel), uski copy yaha save ho jaati hai.": "જ્યારે પણ કોઈ એન્ટ્રી કાઢી નાખો (વેચાણ, ખર્ચ, સ્ટોક, બેંક, ઉધાર, પેનલ), એની કોપી અહીં સેવ થઈ જાય છે.",
+  "Restore": "રિસ્ટોર", "dabate hi entry wapas apni jagah jud jayegi. Ye history bhi cloud me sync hoti hai, isliye sab PCs par dikhegi (last 200 deletes tak).": "દબાવતા જ એન્ટ્રી પાછી પોતાની જગ્યાએ જોડાઈ જશે. આ હિસ્ટરી પણ ક્લાઉડમાં સિંક થાય છે, એટલે બધા PC પર દેખાશે (છેલ્લા 200 ડિલીટ સુધી).",
+  "Abhi tak koi entry delete nahi hui.": "હજુ સુધી કોઈ એન્ટ્રી કાઢી નથી.",
+  "Clear All Data": "બધો ડેટા સાફ કરો", "Ye sabhi panels, sale entries aur expenses permanently delete kar dega. Pehle backup le lena.": "આ બધી પેનલ, વેચાણ એન્ટ્રી અને ખર્ચ કાયમ માટે કાઢી નાખશે. પહેલા બેકઅપ લઈ લેજો.", "Delete All Data": "બધો ડેટા કાઢી નાખો",
+  "🔒 App Locked": "🔒 એપ લોક છે", "PIN daal kar kholo": "PIN નાખીને ખોલો", "Kholo": "ખોલો",
+  "🌐 Language / ભાષા": "🌐 ભાષા / Language", "App ki bhasha chuno — sirf is device ke liye save hoti hai.": "એપની ભાષા પસંદ કરો — ફક્ત આ ડિવાઇસ માટે સેવ થાય છે.", "Language": "ભાષા",
+  "Koi panel nahi hai. Settings tab me panel add karein.": "કોઈ પેનલ નથી. સેટિંગ્સ ટેબમાં પેનલ ઉમેરો.", "Abhi koi data nahi hai.": "હજુ કોઈ ડેટા નથી.", "Koi entry nahi mili.": "કોઈ એન્ટ્રી ન મળી.",
+  "Koi stock entry nahi hai.": "કોઈ સ્ટોક એન્ટ્રી નથી.", "Koi bank balance entry nahi hai.": "કોઈ બેંક બેલેન્સ એન્ટ્રી નથી.", "Koi balance baki nahi hai.": "કોઈ બેલેન્સ બાકી નથી.", "Koi entry nahi hai.": "કોઈ એન્ટ્રી નથી.", "Koi panel nahi hai.": "કોઈ પેનલ નથી.",
+  "Backup copy ho gaya — ab Notepad me paste karo.": "બેકઅપ કોપી થયો — હવે Notepad માં પેસ્ટ કરો.", "Backup import ho gaya.": "બેકઅપ ઇમ્પોર્ટ થયો.",
+  "Bank Balance entry delete ho gayi — Settings ke Delete History se wapas la sakte ho.": "બેંક બેલેન્સ એન્ટ્રી કાઢી નાખી — સેટિંગ્સની ડિલીટ હિસ્ટરીમાંથી પાછી લાવી શકો.", "Bank Balance save ho gayi.": "બેંક બેલેન્સ સેવ થયું.",
+  "Cloud se connect nahi ho paya — internet check karke page reload karo.": "ક્લાઉડ સાથે કનેક્ટ ન થયું — ઇન્ટરનેટ ચેક કરીને પેજ રિલોડ કરો.",
+  "Entry delete ho gayi — Settings ke Delete History se wapas la sakte ho.": "એન્ટ્રી કાઢી નાખી — સેટિંગ્સની ડિલીટ હિસ્ટરીમાંથી પાછી લાવી શકો.", "Entry save ho gayi.": "એન્ટ્રી સેવ થઈ.", "Entry wapas aa gayi.": "એન્ટ્રી પાછી આવી ગઈ.",
+  "Expense save ho gaya.": "ખર્ચ સેવ થયો.", "Galat PIN.": "ખોટો PIN.", "Month aur value dono bharein.": "મહિનો અને કિંમત બંને ભરો.", "Naya data cloud se aa gaya.": "નવો ડેટા ક્લાઉડથી આવી ગયો.",
+  "Opening Balance clear ho gayi.": "ઓપનિંગ બેલેન્સ સાફ થયું.", "Opening Balance save ho gayi.": "ઓપનિંગ બેલેન્સ સેવ થયું.",
+  "PIN hat gaya — ab app bina PIN ke khulegi.": "PIN હટી ગયો — હવે એપ PIN વગર ખુલશે.", "PIN set ho gaya — ab app kholne par PIN lagega.": "PIN સેટ થયો — હવે એપ ખોલતા PIN લાગશે.", "PIN sirf 4-6 digits ka hona chahiye.": "PIN ફક્ત 4-6 આંકડાનો હોવો જોઈએ.",
+  "Panel add ho gaya.": "પેનલ ઉમેરાઈ.", "Panel delete ho gaya — Delete History se wapas la sakte ho.": "પેનલ કાઢી નાખી — ડિલીટ હિસ્ટરીમાંથી પાછી લાવી શકો.", "Pehle Settings me ek Panel add karein.": "પહેલા સેટિંગ્સમાં એક પેનલ ઉમેરો.",
+  "Pehle ek Person chunein ya naya add karein.": "પહેલા એક વ્યક્તિ પસંદ કરો અથવા નવી ઉમેરો.", "Pehli baar data cloud par save ho gaya.": "પહેલી વાર ડેટા ક્લાઉડ પર સેવ થયો.", "Sale entry save ho gayi.": "વેચાણ એન્ટ્રી સેવ થઈ.",
+  "Sara data delete ho gaya.": "બધો ડેટા કાઢી નાખ્યો.", "Save nahi hua — internet check karo, main khud dobara try karunga.": "સેવ ન થયું — ઇન્ટરનેટ ચેક કરો, હું જાતે ફરી પ્રયત્ન કરીશ.",
+  "Stock entry delete ho gayi — Settings ke Delete History se wapas la sakte ho.": "સ્ટોક એન્ટ્રી કાઢી નાખી — સેટિંગ્સની ડિલીટ હિસ્ટરીમાંથી પાછી લાવી શકો.", "Stock entry save ho gayi.": "સ્ટોક એન્ટ્રી સેવ થઈ.",
+  "Text select ho gaya — Ctrl+C dabao.": "ટેક્સ્ટ સિલેક્ટ થયો — Ctrl+C દબાવો.", "Ye entry restore nahi ho sakti.": "આ એન્ટ્રી રિસ્ટોર ન થઈ શકે.", "Ye file valid backup nahi hai.": "આ ફાઇલ માન્ય બેકઅપ નથી.",
+  "4-6 digit ka PIN daalo (yaad rakhna — bhoolne par main hi hata sakta hoon):": "4-6 આંકડાનો PIN નાખો (યાદ રાખજો — ભૂલી જાઓ તો હું જ હટાવી શકું):", "Abhi wala PIN daalo confirm karne ke liye:": "કન્ફર્મ કરવા હાલનો PIN નાખો:",
+  "Import karne se current data overwrite ho jayega. Continue?": "ઇમ્પોર્ટ કરવાથી હાલનો ડેટા ઓવરરાઇટ થઈ જશે. ચાલુ રાખવું?", "Naya person ka naam:": "નવી વ્યક્તિનું નામ:", "Opening Balance clear karni hai?": "ઓપનિંગ બેલેન્સ સાફ કરવું છે?",
+  "Pehle abhi wala PIN daalo:": "પહેલા હાલનો PIN નાખો:", "Ye bank balance entry delete karni hai?": "આ બેંક બેલેન્સ એન્ટ્રી કાઢી નાખવી છે?", "Ye entry delete karni hai?": "આ એન્ટ્રી કાઢી નાખવી છે?", "Ye stock entry delete karni hai?": "આ સ્ટોક એન્ટ્રી કાઢી નાખવી છે?",
+  "Ye sabhi Panels, Sale Entries, Expenses, Stock, Bank Balance, aur Udhaar Khata ka data permanently delete kar dega. Ye undo nahi ho sakta — pehle Export Backup le lena agar zarurat pade.": "આ બધી પેનલ, વેચાણ એન્ટ્રી, ખર્ચ, સ્ટોક, બેંક બેલેન્સ અને ઉધાર ખાતાનો ડેટા કાયમ માટે કાઢી નાખશે. આ પાછું નહીં થાય — જરૂર હોય તો પહેલા બેકઅપ એક્સપોર્ટ કરી લેજો.",
+  "Aage": "આગળ", "Add": "ઉમેરો", "Haan, Sab Delete Karo": "હા, બધું કાઢી નાખો", "Hatao": "હટાવો", "Import": "ઇમ્પોર્ટ", "Set Karo": "સેટ કરો", "Update": "અપડેટ",
+  "Clear Opening Balance": "ઓપનિંગ બેલેન્સ સાફ કરો", "Delete Entry": "એન્ટ્રી કાઢી નાખો", "Delete Panel": "પેનલ કાઢી નાખો", "Entry Already Hai": "એન્ટ્રી પહેલેથી છે", "Import Backup": "બેકઅપ ઇમ્પોર્ટ",
+  "Naya PIN Set Karo": "નવો PIN સેટ કરો", "Naya Person": "નવી વ્યક્તિ", "PIN Hatao": "PIN હટાવો", "Purana PIN": "જૂનો PIN", "Rename Panel": "પેનલનું નામ બદલો", "⚠️ Sabhi Data Delete Karein?": "⚠️ બધો ડેટા કાઢી નાખવો?"
+},
+en: {
+  "Monthly sale, payment aur profit — data cloud me save hota hai, isliye ye file jis bhi PC me kholo hamesha latest hisab dikhega aur koi bhi entry dal sakta hai. Settings tab se backup zaroor le lena.": "Monthly sales, payments and profit — data is saved in the cloud, so this file shows the latest figures on any PC and anyone can add entries. Do take a backup from the Settings tab.",
+  "☁️ Saved": "☁️ Saved", "⏳ Saving...": "⏳ Saving...",
+  "🤝 Udhaar Khata": "🤝 Credit Ledger", "Udhaar": "Ledger",
+  "All Time": "All Time", "(ek month select karein)": "(select one month)",
+  "Monthly Profit = (Bank Balance + Portal Balance + Stock + Cash + Levana − Investment − Devana + Upad) is month ka − pichle month ka. Isme Stock/Cash/Bank Balance us month ke liye zaroor bhare hone chahiye, warna \"—\" dikhega.": "Monthly Profit = (Bank Balance + Portal Balance + Stock + Cash + Receivables − Investment − Payables + Drawings) for this month − previous month. Stock/Cash/Bank Balance must be filled for that month, otherwise \"—\" is shown.",
+  "Total Levana (lena hai)": "Total Receivables (to collect)", "Total Devana (dena hai)": "Total Payables (to pay)", "Total Upad (personal draw)": "Total Drawings (personal)", "(yehi profit me count hoti hai)": "(this is what counts in profit)",
+  "🧮 Monthly Profit ka Pura Hisab": "🧮 Full Monthly Profit Breakdown", "Is period ke liye koi sale data nahi hai.": "No sales data for this period.",
+  "sabhi months ek nazar me": "all months at a glance",
+  "Note: Ek Month + Panel + Platform ke liye ek hi entry rehti hai — dobara save karoge to existing entry update ho jayegi.": "Note: Only one entry exists per Month + Panel + Platform — saving again updates the existing entry.",
+  "live, isi tab ki Cash entries se": "live, from this tab's cash entries", "💸 Kharch Hua (Expense)": "💸 Money Out (Expense)", "💰 Cash Aaya (Cash In)": "💰 Money In (Cash In)",
+  "Upad / Personal": "Drawings / Personal", "General (no panel)": "General (no panel)",
+  "\"Cash Aaya\" wale entries (Bank Withdrawal, Product Sell, etc.) — Dashboard ka Cash Balance turant update ho jaata hai. \"Kharch Hua\" wale entries Total Expenses me count hote hain, aur agar Source=\"Cash\" ho to Cash Balance se bhi ghat jaate hain.": "\"Money In\" entries (Bank Withdrawal, Product Sell, etc.) update the Dashboard Cash Balance immediately. \"Money Out\" entries count in Total Expenses, and if Source=\"Cash\" they also reduce the Cash Balance.",
+  "Total Cash Aaya (In)": "Total Cash In",
+  "Ye Total Cash+Bank dono expenses jodta hai. Monthly Profit calculation me sirf": "This total adds both Cash and Bank expenses. In the Monthly Profit calculation only",
+  "expenses hi Cash Balance ghatate hain — Bank expenses Profit formula ko directly affect nahi karte (Bank Balance alag se, Bank Balance tab me track hoti hai).": "expenses reduce the Cash Balance — Bank expenses do not directly affect the profit formula (Bank Balance is tracked separately in the Bank Balance tab).",
+  "(auto, Expenses & Cash tab se)": "(auto, from Expenses & Cash tab)",
+  "Har month me ek hi Stock/Cash value rehti hai — dobara save karoge to us month ki entry update ho jayegi. Cash in Hand ab manually type nahi karna — ye Expenses & Cash tab ki transactions se khud calculate hoti hai. Ye Monthly Profit calculation me bhi use hoti hai.": "Only one Stock/Cash value exists per month — saving again updates that month's entry. Cash in Hand is no longer typed manually — it is calculated from the Expenses & Cash tab transactions. It is also used in the Monthly Profit calculation.",
+  "Har month + panel ke liye ek hi Bank Balance rehti hai — dobara save karoge to us entry update ho jayegi.": "Only one Bank Balance exists per month + panel — saving again updates that entry.",
+  "Investment (loan liya)": "Investment (loan taken)", "Levana (lena hai)": "Receivable (to collect)", "Devana (dena hai)": "Payable (to pay)",
+  "➕ Badhao": "➕ Increase", "➖ Ghatao (payment/settle)": "➖ Decrease (payment/settle)", "-- Person chuno --": "-- Select person --", "+ Naya Person": "+ New Person",
+  "Investment = jo paisa aapne kisi se liya business me lagane ke liye. Levana = jo paisa aapko doosron se lena hai. Devana = jo paisa aapko doosron ko dena hai. \"Badhao\" se balance badhta hai (naya udhaar/purchase), \"Ghatao\" se ghatta hai (payment kiya) — total hamesha current/live balance dikhata hai. Upad ab Expenses & Cash tab me hai.": "Investment = money you borrowed to put into the business. Receivable = money others owe you. Payable = money you owe others. \"Increase\" raises the balance (new credit/purchase), \"Decrease\" lowers it (payment made) — the total always shows the current/live balance. Drawings are now in the Expenses & Cash tab.",
+  "Teeno Cash Balance se automatically linked hain:": "All three are automatically linked to the Cash Balance:",
+  "Levana Badhao (udhaar diya) = Cash kam, Ghatao (wapas mila) = Cash zyada. Devana Badhao (naya udhaar liya, abhi payment nahi) = Cash par asar nahi, Ghatao (payment kiya) = Cash kam. Investment Badhao (paisa mila) = Cash zyada, Ghatao (wapas kiya) = Cash kam. Entry delete karne se uska ulta apne aap ho jaata hai.": "Receivable Increase (credit given) = less cash, Decrease (money returned) = more cash. Payable Increase (new credit taken, not yet paid) = no cash effect, Decrease (payment made) = less cash. Investment Increase (money received) = more cash, Decrease (returned) = less cash. Deleting an entry reverses it automatically.",
+  "kisko kitna dena/lena baki hai": "who owes what", "Kise/Kiska": "To/From", "Devana": "Payable", "Hume dena hai": "We have to pay", "Levana": "Receivable", "Humein lena hai": "We have to collect",
+  "Ye ek fixed baseline number hai — is Month ke Net Worth (Bank+Portal+Stock+Cash+Levana−Investment+Upad) ka total, jo purani (Excel wali) accounting se liya gaya hai. Agle month ka Monthly Profit calculate karne ke liye is baseline se shuru hota hai. Ek baar set karne ke baad usse pichle mahino ka data granular daalne ki zarurat nahi.": "This is a fixed baseline number — the Net Worth total (Bank+Portal+Stock+Cash+Receivables−Investment+Drawings) for this month, taken from the old (Excel) accounting. The next month's Monthly Profit starts from this baseline. Once set, there is no need to enter detailed data for earlier months.",
+  "Abhi koi Opening Balance set nahi hai.": "No Opening Balance is set yet.",
+  "PIN set karne ke baad app kholne par PIN maanga jayega — har jagah (PC, mobile, sab). Ye ek simple family-lock hai taaki koi aur aapka hisab na khole; PIN yaad rakhna zaroori hai.": "After setting a PIN, the app will ask for it on every open — everywhere (PC, mobile, all). This is a simple family lock so nobody else opens your accounts; remember the PIN.",
+  "Data aapke apne Supabase cloud me save hota hai — file ek baar bhejne ke baad dobara bhejne ki zarurat nahi, sab PCs par hamesha latest data khud aa jata hai. Phir bhi time-time par Export karke JSON backup safe rakhna acha rehta hai (Export dabane par data ek box me khulega, wahan se copy karke Notepad me paste-save kar lena).": "Data is saved in your own Supabase cloud — once the file is shared there is no need to share it again, every PC always gets the latest data. Still, it is good to Export a JSON backup from time to time (Export opens the data in a box; copy it and paste-save into Notepad).",
+  "galti se delete hui entries yaha milengi": "accidentally deleted entries appear here",
+  "Jab bhi koi entry delete hoti hai (Sale, Expense, Stock, Bank, Udhaar, Panel), uski copy yaha save ho jaati hai.": "Whenever an entry is deleted (Sale, Expense, Stock, Bank, Ledger, Panel), a copy is saved here.",
+  "dabate hi entry wapas apni jagah jud jayegi. Ye history bhi cloud me sync hoti hai, isliye sab PCs par dikhegi (last 200 deletes tak).": "puts the entry back where it was. This history is also synced to the cloud, so it shows on all PCs (last 200 deletes).",
+  "Abhi tak koi entry delete nahi hui.": "No entry has been deleted yet.",
+  "Ye sabhi panels, sale entries aur expenses permanently delete kar dega. Pehle backup le lena.": "This permanently deletes all panels, sale entries and expenses. Take a backup first.",
+  "PIN daal kar kholo": "Enter PIN to open", "Kholo": "Open",
+  "🌐 Language / ભાષા": "🌐 Language", "App ki bhasha chuno — sirf is device ke liye save hoti hai.": "Choose the app language — saved only for this device.",
+  "Koi panel nahi hai. Settings tab me panel add karein.": "No panels. Add a panel in the Settings tab.", "Abhi koi data nahi hai.": "No data yet.", "Koi entry nahi mili.": "No entries found.",
+  "Koi stock entry nahi hai.": "No stock entries.", "Koi bank balance entry nahi hai.": "No bank balance entries.", "Koi balance baki nahi hai.": "No balance pending.", "Koi entry nahi hai.": "No entries.", "Koi panel nahi hai.": "No panels.",
+  "Backup copy ho gaya — ab Notepad me paste karo.": "Backup copied — paste it into Notepad.", "Backup import ho gaya.": "Backup imported.",
+  "Bank Balance entry delete ho gayi — Settings ke Delete History se wapas la sakte ho.": "Bank Balance entry deleted — restore it from Settings → Delete History.", "Bank Balance save ho gayi.": "Bank Balance saved.",
+  "Cloud se connect nahi ho paya — internet check karke page reload karo.": "Could not connect to the cloud — check your internet and reload.",
+  "Entry delete ho gayi — Settings ke Delete History se wapas la sakte ho.": "Entry deleted — restore it from Settings → Delete History.", "Entry save ho gayi.": "Entry saved.", "Entry wapas aa gayi.": "Entry restored.",
+  "Expense save ho gaya.": "Expense saved.", "Galat PIN.": "Wrong PIN.", "Month aur value dono bharein.": "Fill both month and value.", "Naya data cloud se aa gaya.": "New data arrived from the cloud.",
+  "Opening Balance clear ho gayi.": "Opening Balance cleared.", "Opening Balance save ho gayi.": "Opening Balance saved.",
+  "PIN hat gaya — ab app bina PIN ke khulegi.": "PIN removed — the app opens without a PIN now.", "PIN set ho gaya — ab app kholne par PIN lagega.": "PIN set — the app will ask for it on open.", "PIN sirf 4-6 digits ka hona chahiye.": "PIN must be 4-6 digits.",
+  "Panel add ho gaya.": "Panel added.", "Panel delete ho gaya — Delete History se wapas la sakte ho.": "Panel deleted — restore it from Delete History.", "Pehle Settings me ek Panel add karein.": "Add a Panel in Settings first.",
+  "Pehle ek Person chunein ya naya add karein.": "Select a person or add a new one first.", "Pehli baar data cloud par save ho gaya.": "Data saved to the cloud for the first time.", "Sale entry save ho gayi.": "Sale entry saved.",
+  "Sara data delete ho gaya.": "All data deleted.", "Save nahi hua — internet check karo, main khud dobara try karunga.": "Not saved — check your internet, I will retry automatically.",
+  "Stock entry delete ho gayi — Settings ke Delete History se wapas la sakte ho.": "Stock entry deleted — restore it from Settings → Delete History.", "Stock entry save ho gayi.": "Stock entry saved.",
+  "Text select ho gaya — Ctrl+C dabao.": "Text selected — press Ctrl+C.", "Ye entry restore nahi ho sakti.": "This entry cannot be restored.", "Ye file valid backup nahi hai.": "This file is not a valid backup.",
+  "4-6 digit ka PIN daalo (yaad rakhna — bhoolne par main hi hata sakta hoon):": "Enter a 4-6 digit PIN (remember it — only I can remove it if forgotten):", "Abhi wala PIN daalo confirm karne ke liye:": "Enter the current PIN to confirm:",
+  "Import karne se current data overwrite ho jayega. Continue?": "Importing will overwrite the current data. Continue?", "Naya person ka naam:": "New person's name:", "Opening Balance clear karni hai?": "Clear the Opening Balance?",
+  "Pehle abhi wala PIN daalo:": "Enter the current PIN first:", "Ye bank balance entry delete karni hai?": "Delete this bank balance entry?", "Ye entry delete karni hai?": "Delete this entry?", "Ye stock entry delete karni hai?": "Delete this stock entry?",
+  "Ye sabhi Panels, Sale Entries, Expenses, Stock, Bank Balance, aur Udhaar Khata ka data permanently delete kar dega. Ye undo nahi ho sakta — pehle Export Backup le lena agar zarurat pade.": "This permanently deletes all Panels, Sale Entries, Expenses, Stock, Bank Balance and Ledger data. This cannot be undone — export a backup first if needed.",
+  "Aage": "Next", "Haan, Sab Delete Karo": "Yes, Delete Everything", "Hatao": "Remove", "Set Karo": "Set",
+  "Entry Already Hai": "Entry Already Exists", "Naya PIN Set Karo": "Set New PIN", "Naya Person": "New Person", "PIN Hatao": "Remove PIN", "Purana PIN": "Old PIN", "⚠️ Sabhi Data Delete Karein?": "⚠️ Delete All Data?"
+}};
+// Dynamic strings (month name / number ke saath) — regex se
+const I18N_RX = {
+  gu: [
+    [/^Total Sale \((.+)\)$/, 'કુલ વેચાણ ($1)'], [/^Stock Value \((.+)\)$/, 'સ્ટોક કિંમત ($1)'], [/^Total \(as of (.+)\)$/, 'કુલ ($1 સુધી)'],
+    [/^Upad sirf (.+) ki$/, 'ઉપાડ ફક્ત $1 ની'], [/^as of (.+)$/, '$1 સુધી'], [/^(\d{4}) \(Poora Saal\)$/, '$1 (આખું વર્ષ)'],
+    [/^Jan (\d{4})$/, 'જાન્યુ $1'], [/^Feb (\d{4})$/, 'ફેબ્રુ $1'], [/^Mar (\d{4})$/, 'માર્ચ $1'], [/^Apr (\d{4})$/, 'એપ્રિલ $1'], [/^May (\d{4})$/, 'મે $1'], [/^Jun (\d{4})$/, 'જૂન $1'],
+    [/^Jul (\d{4})$/, 'જુલાઈ $1'], [/^Aug (\d{4})$/, 'ઓગસ્ટ $1'], [/^Sep (\d{4})$/, 'સપ્ટે $1'], [/^Oct (\d{4})$/, 'ઓક્ટો $1'], [/^Nov (\d{4})$/, 'નવે $1'], [/^Dec (\d{4})$/, 'ડિસે $1']
+  ],
+  en: [ [/^Upad sirf (.+) ki$/, 'Drawings for $1 only'], [/^(\d{4}) \(Poora Saal\)$/, '$1 (Full Year)'] ]
+};
+let _langMem = null; // storage block ho (private mode) to bhi session me language chale
+function getLang(){ const l = _langMem || _lsSafe(()=>localStorage.getItem('lang')); return (l==='gu'||l==='en') ? l : 'hi'; }
+function tr(s){
+  const lang = getLang(); if(lang==='hi' || !s) return s;
+  const key = String(s).replace(/\s+/g,' ').trim();
+  const d = I18N[lang]; if(d[key]) return d[key];
+  for(const [rx,rep] of I18N_RX[lang]){ if(rx.test(key)) return key.replace(rx,rep); }
+  return s;
+}
+function _trText(n){
+  if(n.__orig === undefined) n.__orig = n.nodeValue;
+  const raw = n.__orig, core = raw.trim();
+  if(!core){ return; }
+  const out = tr(core.replace(/\s+/g,' '));
+  const next = (out === core.replace(/\s+/g,' ')) ? raw : raw.replace(core, out);
+  if(n.nodeValue !== next){ n.__lastSet = next; n.nodeValue = next; }
+}
+function translateNode(root){
+  if(root.nodeType === 3){ _trText(root); return; }
+  if(root.nodeType !== 1 || root.tagName==='SCRIPT' || root.tagName==='STYLE') return;
+  if(root.placeholder !== undefined && root.placeholder){ if(root.__origPh===undefined) root.__origPh=root.placeholder; root.placeholder = tr(root.__origPh); }
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: t => (t.parentNode && (t.parentNode.tagName==='SCRIPT'||t.parentNode.tagName==='STYLE')) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+  const list = []; while(w.nextNode()) list.push(w.currentNode);
+  list.forEach(_trText);
+  root.querySelectorAll && root.querySelectorAll('[placeholder]').forEach(el=>{ if(el.__origPh===undefined) el.__origPh=el.placeholder; el.placeholder = tr(el.__origPh); });
+}
+function applyLang(){
+  const lang = getLang();
+  document.documentElement.lang = lang==='gu' ? 'gu' : 'en';
+  document.documentElement.classList.toggle('lang-gu', lang==='gu');
+  translateNode(document.body);
+  const sel = document.getElementById('langSelect'); if(sel) sel.value = lang;
+}
+function setLang(lang){
+  _langMem = lang;
+  _lsSafe(()=>localStorage.setItem('lang', lang));
+  applyLang();
+}
+const _i18nMO = new MutationObserver(muts => {
+  if(getLang()==='hi') return;
+  for(const m of muts){
+    if(m.type==='characterData'){ const n=m.target; if(n.nodeValue===n.__lastSet) continue; /* hamara hi change */ n.__orig=n.nodeValue; _trText(n); }
+    else m.addedNodes.forEach(n => { translateNode(n); });
+  }
+});
+_i18nMO.observe(document.body, { childList:true, subtree:true, characterData:true });
+applyLang();
 
 /* ---------- INIT ---------- */
 // Pehle embedded/local data se turant render (blank screen na dikhe),
